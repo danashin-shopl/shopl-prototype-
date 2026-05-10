@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>근무지 - Shopl</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: #f5f6f8; color: #1a1a1a; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.gnb { height: 48px; background: #1b2135; display: flex; align-items: center; padding: 0 16px; gap: 0; flex-shrink: 0; z-index: 100; }
+.gnb-logo { color: #fff; font-size: 13px; font-weight: 700; padding: 0 12px; letter-spacing: -0.3px; }
+.gnb-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+.gnb-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); border-radius: 6px; border: none; background: none; }
+.gnb-icon:hover { background: rgba(255,255,255,0.08); }
+.gnb-page { color: #fff; font-size: 14px; font-weight: 500; padding: 0 8px; }
+.gnb-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.gnb-support { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 500; margin-right: 4px; }
+.gnb-lang { color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 8px; cursor: pointer; display: flex; align-items: center; gap: 3px; }
+.gnb-avatar { width: 28px; height: 28px; border-radius: 50%; background: #4f6bff; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; cursor: pointer; margin-left: 4px; }
+.body-wrap { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 200px; background: #1b2135; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding-bottom: 8px; }
+.sidebar-group { font-size: 10px; color: rgba(255,255,255,0.3); padding: 14px 16px 4px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.si { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; color: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.1s; }
+.si:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.si.active { background: rgba(255,255,255,0.1); color: #fff; }
+.si svg { flex-shrink: 0; }
+.sidebar-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
+.trial-box { margin: 6px 12px 6px; background: #1e3a8a; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.trial-box .dd { font-size: 12px; font-weight: 700; color: #60a5fa; }
+.trial-box .tt { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.top-tabs { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; flex-shrink: 0; }
+.top-tab { padding: 13px 4px; font-size: 14px; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; margin-right: 20px; }
+.top-tab.active { color: #2563eb; font-weight: 600; border-bottom-color: #2563eb; }
+.toolbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 10px 24px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.status-tab { padding: 6px 4px; font-size: 14px; color: #6b7280; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-right: 16px; }
+.status-tab.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #1a1a1a; }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.btn-primary { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-default { background: #fff; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.btn-default:hover { background: #f9fafb; }
+.btn-default-r { border-left: none; border-radius: 0 6px 6px 0; padding: 7px 9px; background: #fff; color: #374151; border: 1px solid #d1d5db; cursor: pointer; }
+.btn-default-r:hover { background: #f9fafb; }
+.view-bar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 8px 24px; display: flex; align-items: center; flex-shrink: 0; }
+.view-toggle { display: flex; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; }
+.vbtn { padding: 5px 12px; font-size: 13px; cursor: pointer; background: #fff; color: #6b7280; border: none; display: flex; align-items: center; gap: 5px; transition: background 0.1s; }
+.vbtn + .vbtn { border-left: 1px solid #d1d5db; }
+.vbtn.active { background: #f3f4f6; color: #1a1a1a; font-weight: 500; }
+.active-filters { padding: 6px 24px; background: #fff; border-bottom: 1px solid #e5e7eb; display: none; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+.active-filters.visible { display: flex; }
+.ftag { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 12px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
+.ftag:hover { background: #dbeafe; }
+.reset-btn { font-size: 11px; color: #9ca3af; background: none; border: none; cursor: pointer; margin-left: auto; }
+.map-view { display: flex; flex: 1; overflow: hidden; }
+.map-area { flex: 1; position: relative; background: #dce8f0; overflow: hidden; }
+.map-area svg { width: 100%; height: 100%; }
+.zoom-ctrl { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 2px; z-index: 10; }
+.zbtn { width: 28px; height: 28px; background: #fff; border: 1px solid #d1d5db; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; color: #6b7280; font-weight: 300; line-height: 1; }
+.zbtn:hover { background: #f3f4f6; }
+.map-legend { position: absolute; bottom: 12px; left: 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 7px; padding: 8px 11px; font-size: 12px; }
+.legend-title { font-weight: 600; font-size: 11px; color: #374151; margin-bottom: 5px; }
+.legend-item { display: flex; align-items: center; gap: 6px; color: #6b7280; margin-bottom: 3px; }
+.legend-item:last-child { margin-bottom: 0; }
+.ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tooltip-box { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 20; display: none; transform: translateX(-50%); }
+.tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1a1a1a; }
+.side-panel { width: 232px; background: #fff; border-left: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; }
+.panel-section { border-bottom: 1px solid #f3f4f6; padding: 12px 14px; }
+.panel-title { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+.fitem { display: flex; align-items: center; justify-content: space-between; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 12px; color: #374151; margin-bottom: 1px; transition: background 0.1s; user-select: none; }
+.fitem:hover { background: #f9fafb; }
+.fitem.active { background: #eff6ff; color: #1d4ed8; }
+.fitem-left { display: flex; align-items: center; gap: 6px; }
+.fdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.fcnt { font-size: 11px; background: #f3f4f6; color: #6b7280; border-radius: 10px; padding: 1px 6px; }
+.fitem.active .fcnt { background: #dbeafe; color: #1d4ed8; }
+.list-view { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.list-inner { flex: 1; overflow-y: auto; padding: 18px 24px 0; }
+.list-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.list-count { font-size: 13px; color: #374151; display: flex; align-items: center; gap: 8px; }
+.list-count strong { font-weight: 600; }
+.sort-select { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 8px; font-size: 12px; color: #374151; background: #fff; }
+.list-actions { display: flex; align-items: center; gap: 6px; }
+.search-box { border: 1px solid #d1d5db; border-radius: 6px; padding: 5px 10px 5px 28px; font-size: 12px; color: #374151; background: #fff url("data:image/svg+xml,%3Csvg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 8px center; width: 160px; }
+.search-box:focus { outline: none; border-color: #2563eb; }
+.tbl-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 9px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; background: #f9fafb; white-space: nowrap; }
+td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafafa; }
+.acc-badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+.acc-v { background: #dcfce7; color: #15803d; }
+.acc-b { background: #dbeafe; color: #1d4ed8; }
+.acc-i { background: #fee2e2; color: #dc2626; }
+.list-footer { background: #fff; border-top: 1px solid #e5e7eb; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.footer-actions { display: flex; gap: 6px; }
+.footer-btn { padding: 5px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; background: #fff; color: #374151; cursor: pointer; }
+.footer-btn:hover { background: #f9fafb; }
+.pagination { display: flex; align-items: center; gap: 3px; }
+.pgbtn { width: 27px; height: 27px; display: flex; align-items: center; justify-content: center; border: 1px solid #d1d5db; border-radius: 5px; font-size: 12px; cursor: pointer; background: #fff; color: #374151; }
+.pgbtn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+.pgbtn:hover:not(.active) { background: #f3f4f6; }
+input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: #2563eb; }
+</style>
+</head>
+<body>
+
+<div class="gnb">
+  <span class="gnb-logo">샤플앤컴퍼니</span>
+  <div class="gnb-divider"></div>
+  <button class="gnb-icon">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <span class="gnb-page">근무지</span>
+  <div class="gnb-right">
+    <button class="gnb-support">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      1:1 문의
+    </button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+    <span class="gnb-lang"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> 한국어</span>
+    <div class="gnb-avatar">A</div>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <div class="sidebar">
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>채팅</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>AI 챗봇</div>
+    <div class="sidebar-group">매장 데이터 수집</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>판매량</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>가격</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>재고</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>전시현황</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>브랜드 및 제품</div>
+    <div class="sidebar-group">목표 및 평가</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>판매 목표</div>
+    <div class="sidebar-group">비용</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>비용 정산</div>
+    <div class="sidebar-group">승인</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>승인</div>
+    <div class="sidebar-group">관리</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>구성원</div>
+    <div class="si active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>근무지</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>그룹</div>
+    <div class="sidebar-group">설정 및 결재</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>회사 설정</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>기능 설정</div>
+    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>결재</div>
+    <div class="sidebar-bottom">
+      <div class="trial-box">
+        <div class="dd">D-30</div>
+        <div class="tt">무료체험중 · 요금제 보기 ↗</div>
+      </div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>다운로드</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="top-tabs">
+      <div class="top-tab active">현황</div>
+      <div class="top-tab">설정</div>
+    </div>
+
+    <div class="toolbar">
+      <button class="status-tab active" onclick="setStatus(this)">활성</button>
+      <button class="status-tab" onclick="setStatus(this)">비활성</button>
+      <div class="toolbar-right">
+        <button class="btn-primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          근무지 추가
+        </button>
+        <div style="display:flex;">
+          <button class="btn-default" style="border-radius:6px 0 0 6px; border-right:none;">일괄 작업</button>
+          <button class="btn-default-r">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="view-bar">
+      <div class="view-toggle">
+        <button class="vbtn" id="btn-list" onclick="switchView('list')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          목록
+        </button>
+        <button class="vbtn active" id="btn-map" onclick="switchView('map')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          지도
+        </button>
+      </div>
+    </div>
+
+    <div class="active-filters" id="active-filters"></div>
+
+    <!-- 지도 뷰 -->
+    <div class="map-view" id="view-map">
+      <div class="map-area" id="map-area">
+        <div class="tooltip-box" id="tooltip"></div>
+        <svg id="map-svg" viewBox="0 0 700 520" preserveAspectRatio="xMidYMid meet">
+          <rect width="700" height="520" fill="#dce8f0"/>
+          <path d="M0 310 Q100 295 200 305 Q300 315 400 300 Q500 288 700 298 L700 330 Q500 318 400 328 Q300 340 200 330 Q100 320 0 335Z" fill="#b8d4e8" opacity="0.8"/>
+          <rect x="280" y="80" width="90" height="55" rx="6" fill="#c8e0b8" opacity="0.8"/>
+          <rect x="480" y="360" width="70" height="55" rx="6" fill="#c8e0b8" opacity="0.8"/>
+          <rect x="30" y="360" width="60" height="45" rx="6" fill="#c8e0b8" opacity="0.8"/>
+          <line x1="0" y1="200" x2="700" y2="200" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <line x1="0" y1="350" x2="700" y2="350" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <line x1="250" y1="0" x2="250" y2="520" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <line x1="480" y1="0" x2="480" y2="520" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <line x1="0" y1="260" x2="700" y2="260" stroke="#fff" stroke-width="4"/>
+          <line x1="360" y1="0" x2="360" y2="520" stroke="#fff" stroke-width="4"/>
+          <line x1="0" y1="150" x2="700" y2="150" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+          <line x1="0" y1="420" x2="700" y2="420" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+          <line x1="150" y1="0" x2="150" y2="520" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+          <line x1="570" y1="0" x2="570" y2="520" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+          <text x="100" y="125" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">서대문구</text>
+          <text x="300" y="50" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">종로구</text>
+          <text x="530" y="125" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">성북구</text>
+          <text x="80" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">마포구</text>
+          <text x="300" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">중구</text>
+          <text x="530" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">용산구</text>
+          <text x="100" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">영등포구</text>
+          <text x="300" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">강남구</text>
+          <text x="530" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">송파구</text>
+          <text x="320" y="318" font-size="11" fill="rgba(60,100,140,0.7)" font-family="sans-serif">한강</text>
+          <g id="pins-layer"></g>
+        </svg>
+        <div class="zoom-ctrl">
+          <button class="zbtn" id="zoom-in">+</button>
+          <button class="zbtn" id="zoom-out">−</button>
+        </div>
+        <div class="map-legend">
+          <div class="legend-title">출퇴근 인증 방법</div>
+          <div class="legend-item"><span class="ldot" style="background:#1D9E75"></span>GPS</div>
+          <div class="legend-item"><span class="ldot" style="background:#378ADD"></span>QR+GPS</div>
+        </div>
+      </div>
+      <div class="side-panel">
+        <div class="panel-section"><div class="panel-title">위치 정확도</div><div id="filter-accuracy"></div></div>
+        <div class="panel-section"><div class="panel-title">출퇴근 인증 방법</div><div id="filter-auth"></div></div>
+        <div class="panel-section"><div class="panel-title">지역 (도/시)</div><div id="filter-region"></div></div>
+        <div class="panel-section"><div class="panel-title">등급</div><div id="filter-grade"></div></div>
+        <div class="panel-section"><div class="panel-title">채널</div><div id="filter-channel"></div></div>
+      </div>
+    </div>
+
+    <!-- 목록 뷰 -->
+    <div class="list-view" id="view-list" style="display:none;">
+      <div class="list-inner">
+        <div class="list-toolbar">
+          <div class="list-count">
+            전체 <strong>12</strong>
+            &nbsp; 정렬 &nbsp;
+            <select class="sort-select"><option>근무지명</option></select>
+          </div>
+          <div class="list-actions">
+            <input class="search-box" placeholder="검색" type="text">
+            <button class="btn-default" style="font-size:12px; padding:5px 12px;">QR 다운로드</button>
+            <button class="btn-default" style="font-size:12px; padding:5px 12px;">다운로드</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px;"><input type="checkbox"></th>
+                <th>No.</th>
+                <th>근무지명</th>
+                <th>근무지 코드</th>
+                <th>주소</th>
+                <th>위치 정확도</th>
+                <th>배정된 구성원</th>
+                <th>출퇴근 인증</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="list-footer">
+        <div class="footer-actions">
+          <button class="footer-btn">비활성화</button>
+          <button class="footer-btn">삭제</button>
+        </div>
+        <div class="pagination">
+          <button class="pgbtn">«</button>
+          <button class="pgbtn">‹</button>
+          <button class="pgbtn active">1</button>
+          <button class="pgbtn">2</button>
+          <button class="pgbtn">3</button>
+          <button class="pgbtn">4</button>
+          <button class="pgbtn">5</button>
+          <button class="pgbtn">›</button>
+          <button class="pgbtn">»</button>
+        </div>
+        <select class="sort-select"><option>20</option><option>50</option><option>100</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const worksites = [
+  { id:1,  name:"강남 본사",   code:"SEOHQ2026OFFICE01", addr:"서울 강남구 도곡로 111 미진빌딩 8층", x:320, y:440, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:100, members:24 },
+  { id:2,  name:"역삼 지점",   code:"SEOYS2026OFF02",    addr:"서울 강남구 역삼로 123",              x:370, y:460, auth:"GPS",    accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",      radius:150, members:12 },
+  { id:3,  name:"마포 센터",   code:"SEOMPO2026CNT03",   addr:"서울 마포구 마포대로 45",             x:110, y:210, auth:"QR+GPS", accuracy:"부정확",      region:"서울", grade:"B", channel:"대리점",    radius:200, members:8  },
+  { id:4,  name:"광화문 본부", code:"SEOGH2026HQ04",     addr:"서울 종로구 세종대로 168",            x:300, y:110, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:80,  members:45 },
+  { id:5,  name:"중구 지점",   code:"SEOJG2026OFF05",    addr:"서울 중구 명동길 14",                x:330, y:195, auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"C", channel:"프랜차이즈", radius:120, members:6  },
+  { id:6,  name:"서대문 센터", code:"SEOSD2026CNT06",    addr:"서울 서대문구 신촌로 77",            x:130, y:120, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점",    radius:180, members:5  },
+  { id:7,  name:"수원 지점",   code:"GGSW2026OFF07",     addr:"경기 수원시 영통구 월드컵로 206",     x:270, y:500, auth:"QR+GPS", accuracy:"관리자 검증", region:"경기", grade:"A", channel:"직영",      radius:100, members:18 },
+  { id:8,  name:"성남 오피스", code:"GGSN2026OFF08",     addr:"경기 성남시 분당구 판교역로 235",     x:440, y:490, auth:"GPS",    accuracy:"건물 수준",   region:"경기", grade:"B", channel:"프랜차이즈", radius:150, members:9  },
+  { id:9,  name:"인천 센터",   code:"ICNCNT2026OFF09",   addr:"인천 남동구 인주대로 123",            x:40,  y:170, auth:"QR+GPS", accuracy:"건물 수준",   region:"인천", grade:"B", channel:"대리점",    radius:200, members:7  },
+  { id:10, name:"종로 오피스", code:"SEOJR2026OFF10",    addr:"서울 종로구 율곡로 10",              x:380, y:80,  auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:80,  members:31 },
+  { id:11, name:"용산 지점",   code:"SEOYS2026OFF11",    addr:"서울 용산구 한강대로 405",           x:530, y:210, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점",    radius:160, members:4  },
+  { id:12, name:"성북 센터",   code:"SEOSB2026CNT12",    addr:"서울 성북구 아리랑로 145",           x:530, y:90,  auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",      radius:120, members:11 },
+];
+
+const accColors  = { "관리자 검증":"#1D9E75", "건물 수준":"#378ADD", "부정확":"#E24B4A" };
+const authColors = { "GPS":"#1D9E75", "QR+GPS":"#378ADD" };
+const accBadge   = { "관리자 검증":"acc-v", "건물 수준":"acc-b", "부정확":"acc-i" };
+const neutral    = "#9ca3af";
+let activeFilters = {}, currentVB = { x:0, y:0, w:700, h:520 };
+
+function switchView(v) {
+  document.getElementById("view-map").style.display = v==='map'?'flex':'none';
+  document.getElementById("view-list").style.display = v==='list'?'flex':'none';
+  document.getElementById("btn-map").classList.toggle("active", v==='map');
+  document.getElementById("btn-list").classList.toggle("active", v==='list');
+}
+function setStatus(el) { document.querySelectorAll(".status-tab").forEach(t=>t.classList.remove("active")); el.classList.add("active"); }
+function countBy(key) { const m={}; worksites.forEach(w=>{m[w[key]]=(m[w[key]]||0)+1;}); return m; }
+function isVisible(w) { for(const[k,v] of Object.entries(activeFilters)){if(w[k]!==v)return false;} return true; }
+function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg",tag); }
+
+function renderPins() {
+  const layer=document.getElementById("pins-layer"); layer.innerHTML="";
+  worksites.forEach(w=>{
+    const vis=isVisible(w), col=vis?authColors[w.auth]:neutral;
+    const g=ns("g"); g.setAttribute("class","pin"); g.setAttribute("transform",`translate(${w.x},${w.y})`); g.style.cursor=vis?"pointer":"default";
+    if(vis){const rc=ns("circle");rc.setAttribute("cx","0");rc.setAttribute("cy","0");rc.setAttribute("r",Math.round(w.radius/5));rc.setAttribute("fill",col+"15");rc.setAttribute("stroke",col+"55");rc.setAttribute("stroke-width","1");rc.setAttribute("stroke-dasharray","4 3");layer.appendChild(rc);}
+    const o=ns("circle");o.setAttribute("cx","0");o.setAttribute("cy","0");o.setAttribute("r","11");o.setAttribute("fill","#fff");o.setAttribute("stroke",col);o.setAttribute("stroke-width","2");
+    const i=ns("circle");i.setAttribute("cx","0");i.setAttribute("cy","0");i.setAttribute("r","5");i.setAttribute("fill",col);
+    g.appendChild(o);g.appendChild(i);
+    g.addEventListener("mouseenter",()=>{
+      if(!vis)return;
+      const tt=document.getElementById("tooltip"),svgR=document.getElementById("map-svg").getBoundingClientRect(),mapR=document.getElementById("map-area").getBoundingClientRect();
+      const px=((w.x-currentVB.x)/currentVB.w)*svgR.width+svgR.left-mapR.left,py=((w.y-currentVB.y)/currentVB.h)*svgR.height+svgR.top-mapR.top;
+      tt.style.display="block";tt.style.left=px+"px";tt.style.top=(py-36)+"px";tt.textContent=w.name;
+    });
+    g.addEventListener("mouseleave",()=>{document.getElementById("tooltip").style.display="none";});
+    g.addEventListener("click",()=>{if(vis)window.open("worksite_detail.html?id="+w.id,"_blank");});
+    layer.appendChild(g);
+  });
+}
+
+function renderFilter(cid,key,colorMap){
+  const c=document.getElementById(cid),counts=countBy(key);c.innerHTML="";
+  Object.entries(counts).forEach(([val,cnt])=>{
+    const div=document.createElement("div");div.className="fitem"+(activeFilters[key]===val?" active":"");
+    const dc=colorMap?(colorMap[val]||neutral):neutral;
+    div.innerHTML=`<div class="fitem-left"><span class="fdot" style="background:${dc}"></span><span>${val}</span></div><span class="fcnt">${cnt}</span>`;
+    div.onclick=()=>{if(activeFilters[key]===val)delete activeFilters[key];else activeFilters[key]=val;renderAll();};
+    c.appendChild(div);
+  });
+}
+
+function renderActiveFilters(){
+  const bar=document.getElementById("active-filters"),entries=Object.entries(activeFilters);
+  if(!entries.length){bar.classList.remove("visible");return;}
+  bar.classList.add("visible");bar.innerHTML="";
+  entries.forEach(([key,val])=>{
+    const tag=document.createElement("span");tag.className="ftag";tag.innerHTML=`${val} <span style="opacity:0.6">✕</span>`;tag.onclick=()=>{delete activeFilters[key];renderAll();};bar.appendChild(tag);
+  });
+  const r=document.createElement("button");r.className="reset-btn";r.textContent="전체 초기화";r.onclick=()=>{activeFilters={};renderAll();};bar.appendChild(r);
+}
+
+function renderTable(){
+  const tbody=document.getElementById("table-body");tbody.innerHTML="";
+  worksites.forEach((w,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><input type="checkbox"></td><td style="color:#9ca3af;font-size:12px;">${i+1}</td><td style="font-weight:500;color:#1a1a1a;cursor:pointer;" onclick="window.open('worksite_detail.html?id=${w.id}','_blank')">${w.name}</td><td style="color:#6b7280;font-size:12px;">${w.code}</td><td style="color:#6b7280;font-size:12px;">${w.addr}</td><td><span class="acc-badge ${accBadge[w.accuracy]}">${w.accuracy}</span></td><td style="color:#374151;">▲ ${w.members}</td><td style="color:#374151;">${w.auth}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAll(){renderPins();renderFilter("filter-accuracy","accuracy",accColors);renderFilter("filter-auth","auth",authColors);renderFilter("filter-region","region",null);renderFilter("filter-grade","grade",null);renderFilter("filter-channel","channel",null);renderActiveFilters();}
+
+function zoom(f){
+  const cx=currentVB.x+currentVB.w/2,cy=currentVB.y+currentVB.h/2;
+  const nw=Math.min(Math.max(currentVB.w*f,200),1000),nh=Math.min(Math.max(currentVB.h*f,150),750);
+  currentVB={x:cx-nw/2,y:cy-nh/2,w:nw,h:nh};
+  document.getElementById("map-svg").setAttribute("viewBox",`${currentVB.x} ${currentVB.y} ${currentVB.w} ${currentVB.h}`);
+}
+document.getElementById("zoom-in").onclick=()=>zoom(0.75);
+document.getElementById("zoom-out").onclick=()=>zoom(1.33);
+renderAll();renderTable();
+</script>
+</body>
+</html>

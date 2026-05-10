@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>근무지 상세 - Shopl</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: #f5f6f8; color: #1a1a1a; min-height: 100vh; }
+
+.gnb { height: 48px; background: #1b2135; display: flex; align-items: center; padding: 0 16px; gap: 0; position: sticky; top: 0; z-index: 100; }
+.gnb-logo { color: #fff; font-size: 13px; font-weight: 700; padding: 0 12px; letter-spacing: -0.3px; }
+.gnb-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+.gnb-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); border-radius: 6px; border: none; background: none; }
+.gnb-icon:hover { background: rgba(255,255,255,0.08); }
+.gnb-page { color: #fff; font-size: 14px; font-weight: 500; padding: 0 8px; }
+.gnb-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.gnb-support { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 500; margin-right: 4px; }
+.gnb-lang { color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 8px; cursor: pointer; display: flex; align-items: center; gap: 3px; }
+.gnb-avatar { width: 28px; height: 28px; border-radius: 50%; background: #4f6bff; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; cursor: pointer; margin-left: 4px; }
+
+.page-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
+
+.back-btn { display: inline-flex; align-items: center; gap: 5px; color: #6b7280; font-size: 13px; cursor: pointer; background: none; border: none; padding: 0; margin-bottom: 16px; }
+.back-btn:hover { color: #374151; }
+
+/* 헤더 카드 */
+.header-area { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px 24px; margin-bottom: 1px; display: flex; align-items: flex-start; gap: 18px; }
+.thumb-area { position: relative; flex-shrink: 0; }
+.thumb { width: 84px; height: 84px; border-radius: 8px; background: #f3f4f6; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.thumb-count { position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.5); color: #fff; font-size: 10px; border-radius: 4px; padding: 1px 5px; font-weight: 500; }
+.thumb-nav { position: absolute; top: 50%; transform: translateY(-50%); display: flex; justify-content: space-between; width: 100%; left: 0; padding: 0 2px; pointer-events: none; }
+.thumb-nav-btn { width: 20px; height: 20px; background: rgba(255,255,255,0.85); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; color: #374151; pointer-events: all; }
+.header-info { flex: 1; min-width: 0; }
+.detail-code { display: inline-block; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+.detail-name { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+.icon-btn { background: none; border: none; cursor: pointer; color: #9ca3af; display: inline-flex; align-items: center; }
+.icon-btn:hover { color: #6b7280; }
+.detail-addr { font-size: 13px; color: #6b7280; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 5px; padding: 3px 10px; font-size: 12px; font-weight: 500; }
+.badge-active { background: #dcfce7; color: #15803d; }
+.badge-photo { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+.badge-gps { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-radius { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.header-map-thumb { width: 220px; height: 90px; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; flex-shrink: 0; background: #dce8f0; }
+.header-map-thumb svg { width: 100%; height: 100%; }
+
+/* 탭 */
+.tabs-wrap { background: #fff; border-bottom: 1px solid #e5e7eb; border-top: 1px solid #e5e7eb; display: flex; padding: 0 24px; }
+.tab { padding: 12px 4px; font-size: 14px; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; margin-right: 20px; }
+.tab.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #1a1a1a; }
+
+/* 콘텐츠 */
+.content-card { background: #fff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; }
+
+.sub-tabs-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f3f4f6; }
+.sub-tabs { display: flex; border: 1px solid #e5e7eb; border-radius: 7px; overflow: hidden; }
+.sub-tab { padding: 5px 14px; font-size: 13px; color: #6b7280; cursor: pointer; background: #fff; border: none; border-right: 1px solid #e5e7eb; }
+.sub-tab:last-child { border-right: none; }
+.sub-tab.active { background: #f3f4f6; color: #1a1a1a; font-weight: 500; }
+.edit-btn { padding: 6px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; background: #fff; color: #374151; cursor: pointer; }
+.edit-btn:hover { background: #f9fafb; }
+
+/* 정보 행 */
+.info-row { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid #f3f4f6; padding: 14px 20px; align-items: start; }
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 6px; padding-top: 1px; }
+.info-value { font-size: 13px; color: #1a1a1a; }
+.copy-btn { display: inline-flex; align-items: center; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 8px; font-size: 11px; color: #6b7280; cursor: pointer; margin-left: 8px; vertical-align: middle; }
+.copy-btn:hover { background: #e5e7eb; }
+
+/* 지도 미리보기 */
+.map-preview { margin: 14px 20px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; background: #dce8f0; height: 200px; }
+.map-preview svg { width: 100%; height: 100%; }
+.acc-legend { display: flex; align-items: center; gap: 16px; padding: 8px 20px; border-top: 1px solid #f3f4f6; flex-wrap: wrap; }
+.acc-legend-title { font-size: 12px; font-weight: 600; color: #374151; }
+.acc-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #6b7280; }
+.acc-dot { width: 7px; height: 7px; border-radius: 50%; }
+.coord-text { padding: 6px 20px 14px; font-size: 12px; color: #9ca3af; }
+
+.field-row { display: grid; grid-template-columns: 140px 1fr; padding: 11px 20px; border-bottom: 1px solid #f3f4f6; align-items: center; }
+.field-row:last-child { border-bottom: none; }
+.field-label { font-size: 13px; color: #6b7280; }
+.field-value { font-size: 13px; color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<div class="gnb">
+  <span class="gnb-logo">샤플앤컴퍼니</span>
+  <div class="gnb-divider"></div>
+  <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <span class="gnb-page">근무지</span>
+  <div class="gnb-right">
+    <button class="gnb-support"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>1:1 문의</button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></button>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+    <span class="gnb-lang"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> 한국어</span>
+    <div class="gnb-avatar">A</div>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <button class="back-btn" onclick="window.close()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+
+  <!-- 헤더 -->
+  <div class="header-area">
+    <div class="thumb-area">
+      <div class="thumb">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div class="thumb-nav">
+        <button class="thumb-nav-btn">‹</button>
+        <button class="thumb-nav-btn">›</button>
+      </div>
+      <div class="thumb-count">+9</div>
+    </div>
+
+    <div class="header-info">
+      <span class="detail-code" id="detail-code">SEO-HQ-001</span>
+      <div class="detail-name">
+        <span id="detail-name">근무지명</span>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      </div>
+      <div class="detail-addr">
+        <span id="detail-addr">주소 로딩 중...</span>
+        <button class="icon-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      </div>
+      <div class="badge-row">
+        <span class="badge badge-active">활성</span>
+        <span class="badge badge-photo">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          사진 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+        <span class="badge badge-gps" id="detail-auth-badge">출퇴근 인증 GPS</span>
+        <span class="badge badge-radius" id="detail-radius-badge">허용 반경 100m</span>
+      </div>
+    </div>
+
+    <div class="header-map-thumb">
+      <svg viewBox="0 0 220 90">
+        <rect width="220" height="90" fill="#dce8f0"/>
+        <line x1="0" y1="45" x2="220" y2="45" stroke="#fff" stroke-width="3"/>
+        <line x1="110" y1="0" x2="110" y2="90" stroke="#fff" stroke-width="3"/>
+        <line x1="0" y1="22" x2="220" y2="22" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="0" y1="68" x2="220" y2="68" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="55" y1="0" x2="55" y2="90" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="165" y1="0" x2="165" y2="90" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <circle id="hmap-radius" cx="110" cy="55" r="16" fill="rgba(29,158,117,0.12)" stroke="rgba(29,158,117,0.4)" stroke-width="1" stroke-dasharray="3 2"/>
+        <circle cx="110" cy="55" r="8" fill="#fff" stroke="#1D9E75" stroke-width="2.5"/>
+        <circle cx="110" cy="55" r="4" fill="#1D9E75"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs-wrap">
+    <div class="tab">근무</div>
+    <div class="tab">업무</div>
+    <div class="tab active">정보</div>
+  </div>
+
+  <!-- 콘텐츠 -->
+  <div class="content-card">
+    <div class="sub-tabs-bar">
+      <div class="sub-tabs">
+        <button class="sub-tab active">기본 정보</button>
+        <button class="sub-tab">추가 정보</button>
+        <button class="sub-tab">고급 정보</button>
+        <button class="sub-tab">Wi-Fi 리스트</button>
+      </div>
+      <button class="edit-btn">편집</button>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        주소
+      </div>
+      <div class="info-value">
+        <span id="detail-full-addr">서울특별시 강남구 도곡로 111 미진빌딩 8층</span>
+        <button class="copy-btn">복사</button>
+      </div>
+    </div>
+
+    <div class="info-row" style="align-items:start; padding-top:16px; padding-bottom:0;">
+      <div class="info-label" style="padding-top:2px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        위치
+      </div>
+      <div style="flex:1;">
+        <div class="map-preview">
+          <svg viewBox="0 0 600 200">
+            <rect width="600" height="200" fill="#dce8f0"/>
+            <path d="M0 120 Q80 110 160 115 Q240 120 320 108 Q400 96 600 105 L600 130 Q400 120 320 130 Q240 140 160 135 Q80 130 0 140Z" fill="#b8d4e8" opacity="0.8"/>
+            <line x1="0" y1="90" x2="600" y2="90" stroke="#fff" stroke-width="4"/>
+            <line x1="300" y1="0" x2="300" y2="200" stroke="#fff" stroke-width="4"/>
+            <line x1="0" y1="48" x2="600" y2="48" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+            <line x1="0" y1="152" x2="600" y2="152" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+            <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+            <line x1="450" y1="0" x2="450" y2="200" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+            <text x="60" y="32" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">서대문구</text>
+            <text x="210" y="32" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">종로구</text>
+            <text x="420" y="32" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">성북구</text>
+            <text x="60" y="72" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">마포구</text>
+            <text x="220" y="72" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">중구</text>
+            <text x="430" y="72" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">용산구</text>
+            <text x="220" y="115" font-size="11" fill="rgba(60,100,140,0.7)" font-family="sans-serif">한강</text>
+            <circle id="map-radius" cx="300" cy="155" r="22" fill="rgba(29,158,117,0.12)" stroke="rgba(29,158,117,0.35)" stroke-width="1" stroke-dasharray="4 3"/>
+            <circle cx="300" cy="155" r="10" fill="#fff" stroke="#1D9E75" stroke-width="2.5"/>
+            <circle cx="300" cy="155" r="5" fill="#1D9E75"/>
+          </svg>
+        </div>
+        <div class="acc-legend">
+          <span class="acc-legend-title">위치 정확도</span>
+          <span class="acc-item"><span class="acc-dot" style="background:#1D9E75"></span>관리자가 위치 검증</span>
+          <span class="acc-item"><span class="acc-dot" style="background:#378ADD"></span>건물 수준 정확도</span>
+          <span class="acc-item"><span class="acc-dot" style="background:#E24B4A"></span>부정확</span>
+        </div>
+        <div class="coord-text">위도 <span id="detail-lat">37.489987</span>&nbsp;&nbsp;|&nbsp;&nbsp;경도 <span id="detail-lng">127.032781</span></div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-label">도 및 도시</div>
+      <div class="field-value" id="detail-region">—</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">등급</div>
+      <div class="field-value" id="detail-grade">—</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">채널</div>
+      <div class="field-value" id="detail-channel">—</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">위치 정확도</div>
+      <div class="field-value" id="detail-accuracy">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const worksites = {
+  1:  { name:"강남 본사",   code:"SEO-HQ-001", addr:"서울특별시 강남구 도곡로 111 미진빌딩 8층",  auth:"GPS",    accuracy:"관리자 검증", region:"서울특별시 강남구",  grade:"A", channel:"직영",      radius:100, lat:37.4899, lng:127.0327 },
+  2:  { name:"역삼 지점",   code:"SEO-YS-002", addr:"서울특별시 강남구 역삼로 123",               auth:"GPS",    accuracy:"건물 수준",   region:"서울특별시 강남구",  grade:"B", channel:"직영",      radius:150, lat:37.4983, lng:127.0279 },
+  3:  { name:"마포 센터",   code:"SEO-MP-003", addr:"서울특별시 마포구 마포대로 45",              auth:"QR+GPS", accuracy:"부정확",      region:"서울특별시 마포구",  grade:"B", channel:"대리점",    radius:200, lat:37.5439, lng:126.9509 },
+  4:  { name:"광화문 본부", code:"SEO-GH-004", addr:"서울특별시 종로구 세종대로 168",             auth:"GPS",    accuracy:"관리자 검증", region:"서울특별시 종로구",  grade:"A", channel:"직영",      radius:80,  lat:37.5759, lng:126.9769 },
+  5:  { name:"중구 지점",   code:"SEO-JG-005", addr:"서울특별시 중구 명동길 14",                 auth:"QR+GPS", accuracy:"건물 수준",   region:"서울특별시 중구",    grade:"C", channel:"프랜차이즈", radius:120, lat:37.5636, lng:126.9869 },
+  6:  { name:"서대문 센터", code:"SEO-SD-006", addr:"서울특별시 서대문구 신촌로 77",             auth:"GPS",    accuracy:"부정확",      region:"서울특별시 서대문구",grade:"C", channel:"대리점",    radius:180, lat:37.5596, lng:126.9369 },
+  7:  { name:"수원 지점",   code:"GG-SW-007",  addr:"경기도 수원시 영통구 월드컵로 206",         auth:"QR+GPS", accuracy:"관리자 검증", region:"경기도 수원시",      grade:"A", channel:"직영",      radius:100, lat:37.2636, lng:127.0286 },
+  8:  { name:"성남 오피스", code:"GG-SN-008",  addr:"경기도 성남시 분당구 판교역로 235",         auth:"GPS",    accuracy:"건물 수준",   region:"경기도 성남시",      grade:"B", channel:"프랜차이즈", radius:150, lat:37.3946, lng:127.1106 },
+  9:  { name:"인천 센터",   code:"ICN-001",    addr:"인천광역시 남동구 인주대로 123",            auth:"QR+GPS", accuracy:"건물 수준",   region:"인천광역시 남동구",  grade:"B", channel:"대리점",    radius:200, lat:37.4563, lng:126.7052 },
+  10: { name:"종로 오피스", code:"SEO-JR-010", addr:"서울특별시 종로구 율곡로 10",              auth:"GPS",    accuracy:"관리자 검증", region:"서울특별시 종로구",  grade:"A", channel:"직영",      radius:80,  lat:37.5756, lng:126.9896 },
+  11: { name:"용산 지점",   code:"SEO-YS-011", addr:"서울특별시 용산구 한강대로 405",           auth:"GPS",    accuracy:"부정확",      region:"서울특별시 용산구",  grade:"C", channel:"대리점",    radius:160, lat:37.5292, lng:126.9648 },
+  12: { name:"성북 센터",   code:"SEO-SB-012", addr:"서울특별시 성북구 아리랑로 145",           auth:"QR+GPS", accuracy:"건물 수준",   region:"서울특별시 성북구",  grade:"B", channel:"직영",      radius:120, lat:37.5894, lng:127.0167 },
+};
+
+const accColors = { "관리자 검증":"#1D9E75", "건물 수준":"#378ADD", "부정확":"#E24B4A" };
+const id = parseInt(params.get("id")) || 1;
+const w  = worksites[id] || worksites[1];
+
+document.title = w.name + " - Shopl";
+document.getElementById("detail-code").textContent         = w.code;
+document.getElementById("detail-name").textContent         = w.name;
+document.getElementById("detail-addr").textContent         = w.addr;
+document.getElementById("detail-full-addr").textContent    = w.addr;
+document.getElementById("detail-auth-badge").textContent   = "출퇴근 인증 " + w.auth;
+document.getElementById("detail-radius-badge").textContent = "허용 반경 " + w.radius + "m";
+document.getElementById("detail-region").textContent       = w.region;
+document.getElementById("detail-grade").textContent        = w.grade;
+document.getElementById("detail-channel").textContent      = w.channel;
+document.getElementById("detail-accuracy").textContent     = w.accuracy;
+document.getElementById("detail-lat").textContent          = w.lat;
+document.getElementById("detail-lng").textContent          = w.lng;
+
+const pinColor = accColors[w.accuracy] || "#1D9E75";
+["map-radius"].forEach(id => {
+  const el = document.getElementById(id);
+  if(el){ el.setAttribute("fill", pinColor+"1e"); el.setAttribute("stroke", pinColor+"66"); }
+});
+document.querySelectorAll("circle[cx='300'][r='10']").forEach(el => el.setAttribute("stroke", pinColor));
+document.querySelectorAll("circle[cx='300'][r='5']").forEach(el => el.setAttribute("fill", pinColor));
+document.querySelectorAll("circle[cx='110'][r='8']").forEach(el => el.setAttribute("stroke", pinColor));
+document.querySelectorAll("circle[cx='110'][r='4']").forEach(el => el.setAttribute("fill", pinColor));
+</script>
+</body>
+</html>
