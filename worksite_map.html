@@ -342,7 +342,7 @@ function renderPins() {
   worksites.forEach(w=>{
     const vis=isVisible(w), col=vis?authColors[w.auth]:neutral;
     const g=ns("g"); g.setAttribute("class","pin"); g.setAttribute("transform",`translate(${w.x},${w.y})`); g.style.cursor=vis?"pointer":"default";
-    if(vis){const rc=ns("circle");rc.setAttribute("cx","0");rc.setAttribute("cy","0");rc.setAttribute("r",Math.round(w.radius/5));rc.setAttribute("fill",col+"15");rc.setAttribute("stroke",col+"55");rc.setAttribute("stroke-width","1");rc.setAttribute("stroke-dasharray","4 3");layer.appendChild(rc);}
+    if(vis){const rc=ns("circle");rc.setAttribute("cx","0");rc.setAttribute("cy","0");rc.setAttribute("r",Math.round(w.radius/5));rc.setAttribute("fill",col+"15");rc.setAttribute("stroke",col+"55");rc.setAttribute("stroke-width","1");rc.setAttribute("stroke-dasharray","4 3");g.appendChild(rc);}
     const o=ns("circle");o.setAttribute("cx","0");o.setAttribute("cy","0");o.setAttribute("r","11");o.setAttribute("fill","#fff");o.setAttribute("stroke",col);o.setAttribute("stroke-width","2");
     const i=ns("circle");i.setAttribute("cx","0");i.setAttribute("cy","0");i.setAttribute("r","5");i.setAttribute("fill",col);
     g.appendChild(o);g.appendChild(i);
