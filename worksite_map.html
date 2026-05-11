@@ -65,7 +65,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD G
 .ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .tooltip-box { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 20; display: none; transform: translateX(-50%); }
 .tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1a1a1a; }
-.side-panel { width: 232px; background: #fff; border-left: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; }
+.side-panel { width: 232px; background: #fff; border-right: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; }
 .panel-section { border-bottom: 1px solid #f3f4f6; padding: 12px 14px; }
 .panel-title { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
 .fitem { display: flex; align-items: center; justify-content: space-between; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 12px; color: #374151; margin-bottom: 1px; transition: background 0.1s; user-select: none; }
@@ -200,6 +200,13 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 
     <!-- 지도 뷰 -->
     <div class="map-view" id="view-map">
+      <div class="side-panel">
+        <div class="panel-section"><div class="panel-title">위치 정확도</div><div id="filter-accuracy"></div></div>
+        <div class="panel-section"><div class="panel-title">출퇴근 인증 방법</div><div id="filter-auth"></div></div>
+        <div class="panel-section"><div class="panel-title">지역 (도/시)</div><div id="filter-region"></div></div>
+        <div class="panel-section"><div class="panel-title">등급</div><div id="filter-grade"></div></div>
+        <div class="panel-section"><div class="panel-title">채널</div><div id="filter-channel"></div></div>
+      </div>
       <div class="map-area" id="map-area">
         <div class="tooltip-box" id="tooltip"></div>
         <svg id="map-svg" viewBox="0 0 700 520" preserveAspectRatio="xMidYMid meet">
@@ -239,13 +246,6 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
           <div class="legend-item"><span class="ldot" style="background:#1D9E75"></span>GPS</div>
           <div class="legend-item"><span class="ldot" style="background:#378ADD"></span>QR+GPS</div>
         </div>
-      </div>
-      <div class="side-panel">
-        <div class="panel-section"><div class="panel-title">위치 정확도</div><div id="filter-accuracy"></div></div>
-        <div class="panel-section"><div class="panel-title">출퇴근 인증 방법</div><div id="filter-auth"></div></div>
-        <div class="panel-section"><div class="panel-title">지역 (도/시)</div><div id="filter-region"></div></div>
-        <div class="panel-section"><div class="panel-title">등급</div><div id="filter-grade"></div></div>
-        <div class="panel-section"><div class="panel-title">채널</div><div id="filter-channel"></div></div>
       </div>
     </div>
 
