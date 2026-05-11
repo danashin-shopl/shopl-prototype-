@@ -63,7 +63,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD G
 .legend-item { display: flex; align-items: center; gap: 6px; color: #6b7280; margin-bottom: 3px; }
 .legend-item:last-child { margin-bottom: 0; }
 .ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.tooltip-box { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 20; display: none; transform: translateX(-50%); }
+.tooltip-box { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 20; display: none; }
 .tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1a1a1a; }
 .side-panel { width: 232px; background: #fff; border-right: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; }
 .panel-section { border-bottom: 1px solid #f3f4f6; padding: 12px 14px; }
@@ -350,7 +350,8 @@ function renderPins() {
       if(!vis)return;
       const tt=document.getElementById("tooltip"),svgR=document.getElementById("map-svg").getBoundingClientRect(),mapR=document.getElementById("map-area").getBoundingClientRect();
       const px=((w.x-currentVB.x)/currentVB.w)*svgR.width+svgR.left-mapR.left,py=((w.y-currentVB.y)/currentVB.h)*svgR.height+svgR.top-mapR.top;
-      tt.style.display="block";tt.style.left=px+"px";tt.style.top=(py-36)+"px";tt.textContent=w.name;
+      tt.style.display="block";tt.textContent=w.name;
+      tt.style.left=(px-tt.offsetWidth/2)+"px";tt.style.top=(py-44)+"px";
     });
     g.addEventListener("mouseleave",()=>{document.getElementById("tooltip").style.display="none";});
     g.addEventListener("click",()=>{if(vis)window.open("worksite_detail.html?id="+w.id,"_blank");});
