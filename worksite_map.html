@@ -472,13 +472,17 @@ function renderFilterBar() {
 }
 
 function toggleDropdown(key) {
+  // 현재 열려있는 드롭다운 확인
+  const currentOpen = document.querySelector(".chip-dropdown.open");
+  const wasOpen = currentOpen && currentOpen.id === "dd-" + key;
   activeFilter = key;
-  document.querySelectorAll(".chip-dropdown").forEach(d => {
-    d.classList.toggle("open", d.id === "dd-" + key && !d.classList.contains("open"));
-    if (d.id !== "dd-" + key) d.classList.remove("open");
-  });
   renderFilterBar();
   renderAll();
+  // 같은 칩 클릭이면 토글, 아니면 열기
+  if (!wasOpen) {
+    const dd = document.getElementById("dd-" + key);
+    if (dd) dd.classList.add("open");
+  }
 }
 
 function setFilterValue(key, val) {
@@ -579,7 +583,9 @@ function renderPins() {
   layer.innerHTML = ""; lLayer.innerHTML = "";
 
   const visible  = worksites.filter(w => {
-    if (filterValues[activeFilter] && w[activeFilter] !== filterValues[activeFilter]) return false;
+    for (const [key, val] of Object.entries(filterValues)) {
+      if (w[key] !== val) return false;
+    }
     return true;
   });
   const clusters = buildClusters(visible);
