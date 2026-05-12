@@ -795,6 +795,11 @@ function zoom(f) {
 document.getElementById("zoom-in").onclick  = () => zoom(0.75);
 document.getElementById("zoom-out").onclick = () => zoom(1.33);
 
+mapCanvas.addEventListener("wheel", e => {
+  e.preventDefault();
+  zoom(e.deltaY > 0 ? 1.15 : 0.87);
+}, { passive: false });
+
 /* ── 목록 테이블 ── */
 function renderTable() {
   const tbody = document.getElementById("list-table-body"); tbody.innerHTML = "";
