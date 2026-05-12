@@ -452,7 +452,7 @@ function renderFilterBar() {
     const allItem = document.createElement("div");
     allItem.className = "dd-item" + (!filterValues[f.key] ? " selected" : "");
     allItem.innerHTML = `전체 ${!filterValues[f.key] ? '<svg class="dd-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : ''}`;
-    allItem.onclick = (e) => { e.stopPropagation(); setFilterValue(f.key, null); };
+    allItem.onclick = (e) => { e.stopPropagation(); e.preventDefault(); setFilterValue(f.key, null); };
     dd.appendChild(allItem);
 
     f.options.forEach(opt => {
@@ -489,12 +489,9 @@ function toggleDropdown(key) {
 function setFilterValue(key, val) {
   if (val === null) delete filterValues[key];
   else filterValues[key] = val;
+  document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
   renderFilterBar();
   renderAll();
-  // 선택 후 드롭다운 닫기
-  setTimeout(() => {
-    document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
-  }, 10);
 }
 
 document.addEventListener("click", (e) => {
