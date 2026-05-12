@@ -487,8 +487,8 @@ function toggleDropdown(key) {
 }
 
 function setFilterValue(key, val) {
-  if (val === null) delete filterValues[key];
-  else filterValues[key] = val;
+  filterValues = {};  // 항상 초기화 후 하나만 적용
+  if (val !== null) filterValues[key] = val;
   document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
   renderFilterBar();
   renderAll();
