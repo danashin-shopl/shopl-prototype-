@@ -6,109 +6,55 @@
 <title>근무지 - Shopl</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: #f5f6f8; color: #1a1a1a; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-.gnb { height: 48px; background: #1b2135; display: flex; align-items: center; padding: 0 16px; gap: 0; flex-shrink: 0; z-index: 100; }
-.gnb-logo { color: #fff; font-size: 13px; font-weight: 700; padding: 0 12px; letter-spacing: -0.3px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', sans-serif; color: #1a1a1a; height: 100vh; overflow: hidden; }
+
+/* ── 목록 뷰 페이지 ── */
+#page-list { display: flex; flex-direction: column; height: 100vh; background: #f5f6f8; }
+.gnb { height: 48px; background: #1b2135; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; }
+.gnb-logo { color: #fff; font-size: 13px; font-weight: 700; padding: 0 12px; }
 .gnb-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
-.gnb-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.7); border-radius: 6px; border: none; background: none; }
+.gnb-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); border-radius: 6px; border: none; background: none; cursor: pointer; }
 .gnb-icon:hover { background: rgba(255,255,255,0.08); }
 .gnb-page { color: #fff; font-size: 14px; font-weight: 500; padding: 0 8px; }
 .gnb-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
-.gnb-support { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 500; margin-right: 4px; }
-.gnb-lang { color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 8px; cursor: pointer; display: flex; align-items: center; gap: 3px; }
+.gnb-support { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; font-weight: 500; margin-right: 4px; }
+.gnb-lang { color: rgba(255,255,255,0.7); font-size: 12px; padding: 0 8px; cursor: pointer; }
 .gnb-avatar { width: 28px; height: 28px; border-radius: 50%; background: #4f6bff; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; cursor: pointer; margin-left: 4px; }
-.body-wrap { display: flex; flex: 1; overflow: hidden; }
+.list-body { display: flex; flex: 1; overflow: hidden; }
 .sidebar { width: 200px; background: #1b2135; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding-bottom: 8px; }
-.sidebar-group { font-size: 10px; color: rgba(255,255,255,0.3); padding: 14px 16px 4px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.sg { font-size: 10px; color: rgba(255,255,255,0.3); padding: 14px 16px 4px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .si { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; color: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.1s; }
 .si:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
 .si.active { background: rgba(255,255,255,0.1); color: #fff; }
 .si svg { flex-shrink: 0; }
-.sidebar-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
-.trial-box { margin: 6px 12px 6px; background: #1e3a8a; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.sb-bottom { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
+.trial-box { margin: 6px 12px; background: #1e3a8a; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
 .trial-box .dd { font-size: 12px; font-weight: 700; color: #60a5fa; }
 .trial-box .tt { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px; }
-.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.top-tabs { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; flex-shrink: 0; }
+.list-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.list-top-tabs { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; flex-shrink: 0; }
 .top-tab { padding: 13px 4px; font-size: 14px; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; margin-right: 20px; }
 .top-tab.active { color: #2563eb; font-weight: 600; border-bottom-color: #2563eb; }
-.toolbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 10px 24px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.list-toolbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 10px 24px; display: flex; align-items: center; flex-shrink: 0; }
 .status-tab { padding: 6px 4px; font-size: 14px; color: #6b7280; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-right: 16px; }
 .status-tab.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #1a1a1a; }
-.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.tb-right { margin-left: auto; display: flex; gap: 6px; }
 .btn-primary { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 5px; }
 .btn-primary:hover { background: #1d4ed8; }
 .btn-default { background: #fff; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
 .btn-default:hover { background: #f9fafb; }
 .btn-default-r { border-left: none; border-radius: 0 6px 6px 0; padding: 7px 9px; background: #fff; color: #374151; border: 1px solid #d1d5db; cursor: pointer; }
-.btn-default-r:hover { background: #f9fafb; }
 .view-bar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 8px 24px; display: flex; align-items: center; flex-shrink: 0; }
 .view-toggle { display: flex; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; }
 .vbtn { padding: 5px 12px; font-size: 13px; cursor: pointer; background: #fff; color: #6b7280; border: none; display: flex; align-items: center; gap: 5px; transition: background 0.1s; }
 .vbtn + .vbtn { border-left: 1px solid #d1d5db; }
 .vbtn.active { background: #f3f4f6; color: #1a1a1a; font-weight: 500; }
-.active-filters { padding: 6px 24px; background: #fff; border-bottom: 1px solid #e5e7eb; display: none; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
-.active-filters.visible { display: flex; }
-.ftag { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 12px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
-.ftag:hover { background: #dbeafe; }
-.reset-btn { font-size: 11px; color: #9ca3af; background: none; border: none; cursor: pointer; margin-left: auto; }
-.map-view { display: flex; flex: 1; overflow: hidden; }
-.map-area { flex: 1; position: relative; background: #dce8f0; overflow: hidden; }
-.map-area svg { width: 100%; height: 100%; }
-.zoom-ctrl { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 2px; z-index: 10; }
-.zbtn { width: 28px; height: 28px; background: #fff; border: 1px solid #d1d5db; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; color: #6b7280; font-weight: 300; line-height: 1; }
-.zbtn:hover { background: #f3f4f6; }
-.map-legend { position: absolute; bottom: 12px; right: 12px; background: #fff; border: 1px solid #d1d5db; border-radius: 7px; padding: 8px 11px; font-size: 12px; }
-.legend-title { font-weight: 600; font-size: 11px; color: #374151; margin-bottom: 5px; }
-.legend-item { display: flex; align-items: center; gap: 6px; color: #6b7280; margin-bottom: 3px; }
-.legend-item:last-child { margin-bottom: 0; }
-.ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.tooltip-box { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 20; display: none; }
-.tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1a1a1a; }
-
-/* 통계 필터 패널 */
-.side-panel { width: 232px; background: #fff; border-right: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; }
-.panel-section { border-bottom: 1px solid #f3f4f6; padding: 12px 14px; }
-.panel-title { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
-.fitem { display: flex; align-items: center; justify-content: space-between; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 12px; color: #374151; margin-bottom: 1px; transition: background 0.1s; user-select: none; }
-.fitem:hover { background: #f9fafb; }
-.fitem.active { background: #eff6ff; color: #1d4ed8; }
-.fitem-left { display: flex; align-items: center; gap: 6px; }
-.fdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.fcnt { font-size: 11px; background: #f3f4f6; color: #6b7280; border-radius: 10px; padding: 1px 6px; }
-.fitem.active .fcnt { background: #dbeafe; color: #1d4ed8; }
-
-/* 근무지 미리보기 패널 */
-.detail-panel { width: 0; background: #fff; border-right: 1px solid #e5e7eb; overflow: hidden; flex-shrink: 0; transition: width 0.2s ease; display: flex; flex-direction: column; }
-.detail-panel.open { width: 240px; }
-.dp-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #f3f4f6; flex-shrink: 0; }
-.dp-close { background: none; border: none; cursor: pointer; color: #9ca3af; display: flex; align-items: center; padding: 3px; border-radius: 4px; }
-.dp-close:hover { background: #f3f4f6; color: #374151; }
-.dp-thumb { width: 100%; height: 130px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-bottom: 1px solid #f3f4f6; }
-.dp-body { padding: 14px; flex: 1; overflow-y: auto; }
-.dp-code { display: inline-block; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 7px; font-size: 11px; color: #6b7280; margin-bottom: 6px; }
-.dp-name { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 5px; line-height: 1.4; }
-.dp-addr { font-size: 12px; color: #6b7280; line-height: 1.5; margin-bottom: 12px; }
-.dp-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 5px; }
-.dp-label { font-size: 11px; color: #9ca3af; width: 64px; flex-shrink: 0; padding-top: 2px; }
-.dp-val { font-size: 12px; color: #374151; }
-.dp-badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 500; }
-.dp-v { background: #dcfce7; color: #15803d; }
-.dp-b { background: #dbeafe; color: #1d4ed8; }
-.dp-i { background: #fee2e2; color: #dc2626; }
-.dp-link { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 16px; padding: 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px; font-size: 12px; color: #2563eb; cursor: pointer; font-weight: 500; text-decoration: none; }
-.dp-link:hover { background: #eff6ff; border-color: #bfdbfe; }
-
-/* 목록 뷰 */
-.list-view { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
 .list-inner { flex: 1; overflow-y: auto; padding: 18px 24px 0; }
-.list-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.list-count { font-size: 13px; color: #374151; display: flex; align-items: center; gap: 8px; }
+.list-count { font-size: 13px; color: #374151; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .list-count strong { font-weight: 600; }
-.sort-select { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 8px; font-size: 12px; color: #374151; background: #fff; }
-.list-actions { display: flex; align-items: center; gap: 6px; }
+.sort-sel { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 8px; font-size: 12px; color: #374151; background: #fff; }
+.list-actions { margin-left: auto; display: flex; gap: 6px; }
 .search-box { border: 1px solid #d1d5db; border-radius: 6px; padding: 5px 10px 5px 28px; font-size: 12px; color: #374151; background: #fff url("data:image/svg+xml,%3Csvg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 8px center; width: 160px; }
-.search-box:focus { outline: none; border-color: #2563eb; }
 .tbl-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th { padding: 9px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; background: #f9fafb; white-space: nowrap; }
@@ -122,190 +68,187 @@ tr:hover td { background: #fafafa; }
 .list-footer { background: #fff; border-top: 1px solid #e5e7eb; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .footer-actions { display: flex; gap: 6px; }
 .footer-btn { padding: 5px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; background: #fff; color: #374151; cursor: pointer; }
-.footer-btn:hover { background: #f9fafb; }
-.pagination { display: flex; align-items: center; gap: 3px; }
+.pagination { display: flex; gap: 3px; }
 .pgbtn { width: 27px; height: 27px; display: flex; align-items: center; justify-content: center; border: 1px solid #d1d5db; border-radius: 5px; font-size: 12px; cursor: pointer; background: #fff; color: #374151; }
 .pgbtn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-.pgbtn:hover:not(.active) { background: #f3f4f6; }
 input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: #2563eb; }
+
+/* ── 지도 뷰 풀스크린 모달 ── */
+#page-map { display: none; position: fixed; inset: 0; z-index: 1000; flex-direction: column; background: #dce8f0; }
+#page-map.open { display: flex; }
+
+/* 상단 바 */
+.map-topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: flex-start; padding: 12px 16px; gap: 10px; pointer-events: none; }
+.map-close-btn { width: 36px; height: 36px; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; pointer-events: all; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+.map-close-btn:hover { background: #f3f4f6; }
+.map-title { background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 600; color: #1a1a1a; pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+
+/* 필터 칩 바 */
+.filter-bar { position: absolute; top: 12px; left: 180px; right: 60px; z-index: 50; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; pointer-events: all; padding-bottom: 2px; }
+.filter-bar::-webkit-scrollbar { height: 3px; }
+.filter-bar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+.filter-chip { display: flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #374151; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.1s; flex-shrink: 0; }
+.filter-chip:hover { background: #f9fafb; }
+.filter-chip.active { background: #1b2135; border-color: #1b2135; color: #fff; }
+.filter-chip svg { flex-shrink: 0; }
+.chip-arrow { opacity: 0.5; }
+
+/* 드롭다운 */
+.chip-dropdown { position: absolute; top: calc(100% + 6px); left: 0; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 6px 0; min-width: 180px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 100; display: none; }
+.chip-dropdown.open { display: block; }
+.dd-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; font-size: 13px; color: #374151; cursor: pointer; transition: background 0.1s; }
+.dd-item:hover { background: #f9fafb; }
+.dd-item.selected { color: #2563eb; font-weight: 500; }
+.dd-check { color: #2563eb; }
+.dd-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* 수정 모드 버튼 */
+.edit-mode-bar { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 50; display: none; }
+.edit-mode-bar.visible { display: flex; gap: 8px; }
+.edit-btn-map { padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: none; }
+.edit-btn-map.start { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+.edit-btn-map.start:hover { background: #f3f4f6; }
+.edit-btn-map.save { background: #2563eb; color: #fff; }
+.edit-btn-map.save:hover { background: #1d4ed8; }
+.edit-btn-map.cancel { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+
+/* 지도 영역 */
+.map-canvas { flex: 1; position: relative; overflow: hidden; }
+.map-canvas svg { width: 100%; height: 100%; }
+
+/* 줌 버튼 */
+.zoom-ctrl { position: absolute; bottom: 32px; right: 16px; display: flex; flex-direction: column; gap: 2px; z-index: 10; }
+.zbtn { width: 32px; height: 32px; background: #fff; border: 1px solid #d1d5db; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: #6b7280; font-weight: 300; line-height: 1; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.zbtn:hover { background: #f3f4f6; }
+
+/* 툴팁 (pin 라벨) */
+.pin-label { position: absolute; background: #1b2135; color: #fff; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 500; white-space: nowrap; pointer-events: none; transform: translateX(-50%); z-index: 15; }
+.pin-label::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1b2135; }
+.hover-tooltip { position: absolute; background: #1a1a1a; color: #fff; border-radius: 5px; padding: 4px 9px; font-size: 12px; font-weight: 500; pointer-events: none; white-space: nowrap; z-index: 30; display: none; }
+.hover-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #1a1a1a; }
+
+/* 정보 패널 */
+.info-panel { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 360px; background: #fff; border-radius: 12px 12px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.12); z-index: 40; display: none; flex-direction: column; max-height: 320px; }
+.info-panel.open { display: flex; }
+.ip-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid #f3f4f6; flex-shrink: 0; }
+.ip-title { font-size: 13px; font-weight: 700; color: #374151; }
+.ip-close { background: none; border: none; cursor: pointer; color: #9ca3af; display: flex; align-items: center; padding: 3px; border-radius: 4px; }
+.ip-close:hover { background: #f3f4f6; }
+
+/* 페이징 */
+.ip-paging { display: flex; align-items: center; gap: 8px; }
+.ip-page-btn { width: 26px; height: 26px; background: #f3f4f6; border: none; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #6b7280; }
+.ip-page-btn:hover { background: #e5e7eb; }
+.ip-page-btn:disabled { opacity: 0.35; cursor: default; }
+.ip-page-info { font-size: 12px; color: #6b7280; }
+
+/* 패널 바디 */
+.ip-body { overflow-y: auto; flex: 1; }
+.ip-thumb { width: 100%; height: 120px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ip-content { padding: 14px 16px; }
+.ip-code { display: inline-block; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 7px; font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+.ip-name { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.ip-addr { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.5; }
+.ip-row { display: flex; gap: 6px; margin-bottom: 5px; }
+.ip-label { font-size: 11px; color: #9ca3af; width: 72px; flex-shrink: 0; padding-top: 2px; }
+.ip-val { font-size: 12px; color: #374151; }
+.ip-badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 500; }
+.ip-v { background: #dcfce7; color: #15803d; }
+.ip-b { background: #dbeafe; color: #1d4ed8; }
+.ip-i { background: #fee2e2; color: #dc2626; }
+.ip-link { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 12px 0 4px; padding: 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px; font-size: 12px; color: #2563eb; cursor: pointer; font-weight: 500; text-decoration: none; }
+.ip-link:hover { background: #eff6ff; }
+
+/* 수정 모드 힌트 */
+.edit-hint { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(27,33,53,0.88); color: #fff; border-radius: 8px; padding: 7px 16px; font-size: 12px; z-index: 50; display: none; white-space: nowrap; }
+.edit-hint.visible { display: block; }
 </style>
 </head>
 <body>
 
-<div class="gnb">
-  <span class="gnb-logo">샤플앤컴퍼니</span>
-  <div class="gnb-divider"></div>
-  <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-  <span class="gnb-page">근무지</span>
-  <div class="gnb-right">
-    <button class="gnb-support"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>1:1 문의</button>
-    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></button>
-    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-    <span class="gnb-lang"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> 한국어</span>
-    <div class="gnb-avatar">A</div>
-  </div>
-</div>
-
-<div class="body-wrap">
-  <div class="sidebar">
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>채팅</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>AI 챗봇</div>
-    <div class="sidebar-group">매장 데이터 수집</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>판매량</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>가격</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>재고</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>전시현황</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>브랜드 및 제품</div>
-    <div class="sidebar-group">목표 및 평가</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>판매 목표</div>
-    <div class="sidebar-group">비용</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>비용 정산</div>
-    <div class="sidebar-group">승인</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>승인</div>
-    <div class="sidebar-group">관리</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>구성원</div>
-    <div class="si active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>근무지</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>그룹</div>
-    <div class="sidebar-group">설정 및 결재</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>회사 설정</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>기능 설정</div>
-    <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>결재</div>
-    <div class="sidebar-bottom">
-      <div class="trial-box"><div class="dd">D-30</div><div class="tt">무료체험중 · 요금제 보기 ↗</div></div>
-      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>다운로드</div>
+<!-- ══════════════ 목록 뷰 페이지 ══════════════ -->
+<div id="page-list">
+  <div class="gnb">
+    <span class="gnb-logo">샤플앤컴퍼니</span>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.15);margin:0 4px;"></div>
+    <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <span class="gnb-page" style="color:#fff;font-size:14px;font-weight:500;padding:0 8px;">근무지</span>
+    <div class="gnb-right">
+      <button class="gnb-support">1:1 문의</button>
+      <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="gnb-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></button>
+      <span class="gnb-lang">한국어</span>
+      <div class="gnb-avatar">A</div>
     </div>
   </div>
-
-  <div class="content">
-    <div class="top-tabs">
-      <div class="top-tab active">현황</div>
-      <div class="top-tab">설정</div>
+  <div class="list-body">
+    <div class="sidebar">
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>채팅</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>AI 챗봇</div>
+      <div class="sg">매장 데이터 수집</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>판매량</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>가격</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>재고</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>전시현황</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>브랜드 및 제품</div>
+      <div class="sg">목표 및 평가</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>판매 목표</div>
+      <div class="sg">비용</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/></svg>비용 정산</div>
+      <div class="sg">승인</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg>승인</div>
+      <div class="sg">관리</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>구성원</div>
+      <div class="si active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>근무지</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>그룹</div>
+      <div class="sg">설정 및 결재</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>회사 설정</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>기능 설정</div>
+      <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/></svg>결재</div>
+      <div class="sb-bottom">
+        <div class="trial-box"><div class="dd">D-30</div><div class="tt">무료체험중 · 요금제 보기 ↗</div></div>
+        <div class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg>다운로드</div>
+      </div>
     </div>
-    <div class="toolbar">
-      <button class="status-tab active" onclick="setStatus(this)">활성</button>
-      <button class="status-tab" onclick="setStatus(this)">비활성</button>
-      <div class="toolbar-right">
-        <button class="btn-primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>근무지 추가</button>
-        <div style="display:flex;">
-          <button class="btn-default" style="border-radius:6px 0 0 6px; border-right:none;">일괄 작업</button>
-          <button class="btn-default-r"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="list-content">
+      <div class="list-top-tabs">
+        <div class="top-tab active">현황</div>
+        <div class="top-tab">설정</div>
+      </div>
+      <div class="list-toolbar">
+        <button class="status-tab active">활성</button>
+        <button class="status-tab">비활성</button>
+        <div class="tb-right">
+          <button class="btn-primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>근무지 추가</button>
+          <div style="display:flex;">
+            <button class="btn-default" style="border-radius:6px 0 0 6px;border-right:none;">일괄 작업</button>
+            <button class="btn-default-r"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="view-bar">
-      <div class="view-toggle">
-        <button class="vbtn" id="btn-list" onclick="switchView('list')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>목록
-        </button>
-        <button class="vbtn active" id="btn-map" onclick="switchView('map')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>지도
-        </button>
-      </div>
-    </div>
-    <div class="active-filters" id="active-filters"></div>
-
-    <!-- 지도 뷰 -->
-    <div class="map-view" id="view-map">
-      <!-- 통계 필터 패널 -->
-      <div class="side-panel">
-        <div class="panel-section"><div class="panel-title">위치 정확도</div><div id="filter-accuracy"></div></div>
-        <div class="panel-section"><div class="panel-title">출퇴근 인증 방법</div><div id="filter-auth"></div></div>
-        <div class="panel-section"><div class="panel-title">지역 (도/시)</div><div id="filter-region"></div></div>
-        <div class="panel-section"><div class="panel-title">등급</div><div id="filter-grade"></div></div>
-        <div class="panel-section"><div class="panel-title">채널</div><div id="filter-channel"></div></div>
-      </div>
-
-      <!-- 근무지 미리보기 패널 -->
-      <div class="detail-panel" id="detail-panel">
-        <div class="dp-header">
-          <span style="font-size:12px; font-weight:700; color:#374151;" id="dp-header-name">근무지 정보</span>
-          <button class="dp-close" onclick="closeDetailPanel()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <div class="view-bar">
+        <div class="view-toggle">
+          <button class="vbtn active" id="btn-list-view">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>목록
+          </button>
+          <button class="vbtn" id="btn-map-view" onclick="openMapView()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>지도
           </button>
         </div>
-        <div class="dp-thumb">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </div>
-        <div class="dp-body">
-          <div class="dp-code" id="dp-code">—</div>
-          <div class="dp-name" id="dp-name">—</div>
-          <div class="dp-addr" id="dp-addr">—</div>
-          <div class="dp-row"><span class="dp-label">위치 정확도</span><span class="dp-val" id="dp-accuracy">—</span></div>
-          <div class="dp-row"><span class="dp-label">인증 방법</span><span class="dp-val" id="dp-auth">—</span></div>
-          <div class="dp-row"><span class="dp-label">허용 반경</span><span class="dp-val" id="dp-radius">—</span></div>
-          <div class="dp-row"><span class="dp-label">등급</span><span class="dp-val" id="dp-grade">—</span></div>
-          <div class="dp-row"><span class="dp-label">채널</span><span class="dp-val" id="dp-channel">—</span></div>
-          <a class="dp-link" id="dp-link" href="#" target="_blank">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            상세 페이지로 이동
-          </a>
-        </div>
       </div>
-
-      <!-- 지도 -->
-      <div class="map-area" id="map-area">
-        <div class="tooltip-box" id="tooltip"></div>
-        <svg id="map-svg" viewBox="0 0 700 520" preserveAspectRatio="xMidYMid meet">
-          <rect width="700" height="520" fill="#dce8f0"/>
-          <path d="M0 310 Q100 295 200 305 Q300 315 400 300 Q500 288 700 298 L700 330 Q500 318 400 328 Q300 340 200 330 Q100 320 0 335Z" fill="#b8d4e8" opacity="0.8"/>
-          <rect x="280" y="80" width="90" height="55" rx="6" fill="#c8e0b8" opacity="0.8"/>
-          <rect x="480" y="360" width="70" height="55" rx="6" fill="#c8e0b8" opacity="0.8"/>
-          <rect x="30" y="360" width="60" height="45" rx="6" fill="#c8e0b8" opacity="0.8"/>
-          <line x1="0" y1="200" x2="700" y2="200" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-          <line x1="0" y1="350" x2="700" y2="350" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-          <line x1="250" y1="0" x2="250" y2="520" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-          <line x1="480" y1="0" x2="480" y2="520" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-          <line x1="0" y1="260" x2="700" y2="260" stroke="#fff" stroke-width="4"/>
-          <line x1="360" y1="0" x2="360" y2="520" stroke="#fff" stroke-width="4"/>
-          <line x1="0" y1="150" x2="700" y2="150" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
-          <line x1="0" y1="420" x2="700" y2="420" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
-          <line x1="150" y1="0" x2="150" y2="520" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
-          <line x1="570" y1="0" x2="570" y2="520" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
-          <text x="100" y="125" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">서대문구</text>
-          <text x="300" y="50" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">종로구</text>
-          <text x="530" y="125" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">성북구</text>
-          <text x="80" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">마포구</text>
-          <text x="300" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">중구</text>
-          <text x="530" y="230" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">용산구</text>
-          <text x="100" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">영등포구</text>
-          <text x="300" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">강남구</text>
-          <text x="530" y="390" font-size="12" fill="rgba(80,100,120,0.7)" font-family="sans-serif">송파구</text>
-          <text x="320" y="318" font-size="11" fill="rgba(60,100,140,0.7)" font-family="sans-serif">한강</text>
-          <g id="pins-layer"></g>
-        </svg>
-        <div class="zoom-ctrl">
-          <button class="zbtn" id="zoom-in">+</button>
-          <button class="zbtn" id="zoom-out">−</button>
-        </div>
-        <div class="map-legend">
-          <div class="legend-title">출퇴근 인증 방법</div>
-          <div class="legend-item"><span class="ldot" style="background:#1D9E75"></span>GPS</div>
-          <div class="legend-item"><span class="ldot" style="background:#378ADD"></span>QR+GPS</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 목록 뷰 -->
-    <div class="list-view" id="view-list" style="display:none;">
       <div class="list-inner">
-        <div class="list-toolbar">
-          <div class="list-count">전체 <strong>12</strong>&nbsp; 정렬 &nbsp;<select class="sort-select"><option>근무지명</option></select></div>
+        <div style="display:flex;align-items:center;margin-bottom:12px;">
+          <div class="list-count">전체 <strong>12</strong>&nbsp; 정렬&nbsp;<select class="sort-sel"><option>근무지명</option></select></div>
           <div class="list-actions">
             <input class="search-box" placeholder="검색" type="text">
-            <button class="btn-default" style="font-size:12px; padding:5px 12px;">QR 다운로드</button>
-            <button class="btn-default" style="font-size:12px; padding:5px 12px;">다운로드</button>
+            <button class="btn-default" style="font-size:12px;padding:5px 12px;">QR 다운로드</button>
+            <button class="btn-default" style="font-size:12px;padding:5px 12px;">다운로드</button>
           </div>
         </div>
         <div class="tbl-wrap">
           <table>
-            <thead>
-              <tr>
-                <th style="width:36px;"><input type="checkbox"></th>
-                <th>No.</th><th>근무지명</th><th>근무지 코드</th><th>주소</th><th>위치 정확도</th><th>배정된 구성원</th><th>출퇴근 인증</th>
-              </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
+            <thead><tr><th style="width:36px;"><input type="checkbox"></th><th>No.</th><th>근무지명</th><th>근무지 코드</th><th>주소</th><th>위치 정확도</th><th>배정된 구성원</th><th>출퇴근 인증</th></tr></thead>
+            <tbody id="list-table-body"></tbody>
           </table>
         </div>
       </div>
@@ -313,10 +256,108 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
         <div class="footer-actions"><button class="footer-btn">비활성화</button><button class="footer-btn">삭제</button></div>
         <div class="pagination">
           <button class="pgbtn">«</button><button class="pgbtn">‹</button>
-          <button class="pgbtn active">1</button><button class="pgbtn">2</button><button class="pgbtn">3</button><button class="pgbtn">4</button><button class="pgbtn">5</button>
+          <button class="pgbtn active">1</button><button class="pgbtn">2</button><button class="pgbtn">3</button>
           <button class="pgbtn">›</button><button class="pgbtn">»</button>
         </div>
-        <select class="sort-select"><option>20</option><option>50</option><option>100</option></select>
+        <select class="sort-sel"><option>20</option><option>50</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 지도 뷰 풀스크린 모달 ══════════════ -->
+<div id="page-map">
+  <!-- 상단: X + 타이틀 + 필터 칩 -->
+  <div class="map-topbar">
+    <button class="map-close-btn" onclick="closeMapView()" title="닫기">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <span class="map-title">근무지</span>
+  </div>
+  <div class="filter-bar" id="filter-bar"></div>
+
+  <!-- 수정 모드 바 -->
+  <div class="edit-mode-bar" id="edit-mode-bar">
+    <button class="edit-btn-map start" id="btn-start-edit" onclick="startEditMode()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>위치 수정
+    </button>
+    <button class="edit-btn-map save" id="btn-save-edit" onclick="saveEditMode()" style="display:none;">저장</button>
+    <button class="edit-btn-map cancel" id="btn-cancel-edit" onclick="cancelEditMode()" style="display:none;">취소</button>
+  </div>
+  <div class="edit-hint" id="edit-hint">pin을 드래그해서 위치를 변경하세요</div>
+
+  <!-- 지도 -->
+  <div class="map-canvas" id="map-canvas">
+    <div class="hover-tooltip" id="hover-tooltip"></div>
+    <svg id="map-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;">
+      <rect width="900" height="600" fill="#dce8f0"/>
+      <path d="M0 360 Q120 340 240 350 Q360 360 480 345 Q600 330 900 342 L900 375 Q600 362 480 375 Q360 388 240 378 Q120 368 0 385Z" fill="#b8d4e8" opacity="0.85"/>
+      <rect x="340" y="90" width="110" height="65" rx="7" fill="#c8e0b8" opacity="0.8"/>
+      <rect x="600" y="420" width="85" height="65" rx="7" fill="#c8e0b8" opacity="0.8"/>
+      <rect x="35" y="420" width="75" height="55" rx="7" fill="#c8e0b8" opacity="0.8"/>
+      <line x1="0" y1="230" x2="900" y2="230" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      <line x1="0" y1="410" x2="900" y2="410" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      <line x1="310" y1="0" x2="310" y2="600" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      <line x1="600" y1="0" x2="600" y2="600" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+      <line x1="0" y1="300" x2="900" y2="300" stroke="#fff" stroke-width="4.5"/>
+      <line x1="450" y1="0" x2="450" y2="600" stroke="#fff" stroke-width="4.5"/>
+      <line x1="0" y1="170" x2="900" y2="170" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+      <line x1="0" y1="490" x2="900" y2="490" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+      <line x1="180" y1="0" x2="180" y2="600" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+      <line x1="720" y1="0" x2="720" y2="600" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+      <text x="120" y="140" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">서대문구</text>
+      <text x="360" y="55" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">종로구</text>
+      <text x="650" y="140" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">성북구</text>
+      <text x="90" y="268" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">마포구</text>
+      <text x="368" y="268" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">중구</text>
+      <text x="650" y="268" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">용산구</text>
+      <text x="120" y="458" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">영등포구</text>
+      <text x="368" y="458" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">강남구</text>
+      <text x="650" y="458" font-size="13" fill="rgba(80,100,120,0.65)" font-family="sans-serif">송파구</text>
+      <text x="400" y="370" font-size="12" fill="rgba(60,100,140,0.7)" font-family="sans-serif">한강</text>
+      <g id="pins-layer"></g>
+      <g id="labels-layer"></g>
+    </svg>
+    <div class="zoom-ctrl">
+      <button class="zbtn" id="zoom-in">+</button>
+      <button class="zbtn" id="zoom-out">−</button>
+    </div>
+  </div>
+
+  <!-- 정보 패널 -->
+  <div class="info-panel" id="info-panel">
+    <div class="ip-header">
+      <span class="ip-title" id="ip-title">근무지 정보</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="ip-paging" id="ip-paging" style="display:none;">
+          <button class="ip-page-btn" id="ip-prev" onclick="changePage(-1)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="ip-page-info" id="ip-page-info">1 / 1</span>
+          <button class="ip-page-btn" id="ip-next" onclick="changePage(1)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <button class="ip-close" onclick="closeInfoPanel()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ip-body">
+      <div class="ip-thumb"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <div class="ip-content">
+        <div class="ip-code" id="ip-code">—</div>
+        <div class="ip-name" id="ip-name">—</div>
+        <div class="ip-addr" id="ip-addr">—</div>
+        <div class="ip-row"><span class="ip-label">위치 정확도</span><span id="ip-accuracy" class="ip-val">—</span></div>
+        <div class="ip-row"><span class="ip-label">인증 방법</span><span id="ip-auth" class="ip-val">—</span></div>
+        <div class="ip-row"><span class="ip-label">허용 반경</span><span id="ip-radius" class="ip-val">—</span></div>
+        <div class="ip-row"><span class="ip-label">등급</span><span id="ip-grade" class="ip-val">—</span></div>
+        <div class="ip-row"><span class="ip-label">채널</span><span id="ip-channel" class="ip-val">—</span></div>
+        <a class="ip-link" id="ip-link" href="#" target="_blank">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          상세 페이지로 이동
+        </a>
       </div>
     </div>
   </div>
@@ -324,124 +365,409 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 
 <script>
 const worksites = [
-  { id:1,  name:"강남 본사",   code:"SEOHQ2026OFFICE01", addr:"서울 강남구 도곡로 111 미진빌딩 8층", x:320, y:440, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:100, members:24 },
-  { id:2,  name:"역삼 지점",   code:"SEOYS2026OFF02",    addr:"서울 강남구 역삼로 123",              x:370, y:460, auth:"GPS",    accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",      radius:150, members:12 },
-  { id:3,  name:"마포 센터",   code:"SEOMPO2026CNT03",   addr:"서울 마포구 마포대로 45",             x:110, y:210, auth:"QR+GPS", accuracy:"부정확",      region:"서울", grade:"B", channel:"대리점",    radius:200, members:8  },
-  { id:4,  name:"광화문 본부", code:"SEOGH2026HQ04",     addr:"서울 종로구 세종대로 168",            x:300, y:110, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:80,  members:45 },
-  { id:5,  name:"중구 지점",   code:"SEOJG2026OFF05",    addr:"서울 중구 명동길 14",                x:330, y:195, auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"C", channel:"프랜차이즈", radius:120, members:6  },
-  { id:6,  name:"서대문 센터", code:"SEOSD2026CNT06",    addr:"서울 서대문구 신촌로 77",            x:130, y:120, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점",    radius:180, members:5  },
-  { id:7,  name:"수원 지점",   code:"GGSW2026OFF07",     addr:"경기 수원시 영통구 월드컵로 206",     x:270, y:500, auth:"QR+GPS", accuracy:"관리자 검증", region:"경기", grade:"A", channel:"직영",      radius:100, members:18 },
-  { id:8,  name:"성남 오피스", code:"GGSN2026OFF08",     addr:"경기 성남시 분당구 판교역로 235",     x:440, y:490, auth:"GPS",    accuracy:"건물 수준",   region:"경기", grade:"B", channel:"프랜차이즈", radius:150, members:9  },
-  { id:9,  name:"인천 센터",   code:"ICNCNT2026OFF09",   addr:"인천 남동구 인주대로 123",            x:40,  y:170, auth:"QR+GPS", accuracy:"건물 수준",   region:"인천", grade:"B", channel:"대리점",    radius:200, members:7  },
-  { id:10, name:"종로 오피스", code:"SEOJR2026OFF10",    addr:"서울 종로구 율곡로 10",              x:380, y:80,  auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",      radius:80,  members:31 },
-  { id:11, name:"용산 지점",   code:"SEOYS2026OFF11",    addr:"서울 용산구 한강대로 405",           x:530, y:210, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점",    radius:160, members:4  },
-  { id:12, name:"성북 센터",   code:"SEOSB2026CNT12",    addr:"서울 성북구 아리랑로 145",           x:530, y:90,  auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",      radius:120, members:11 },
+  { id:1,  name:"강남 본사",   code:"SEOHQ2026OFFICE01", addr:"서울 강남구 도곡로 111 미진빌딩 8층", x:400, y:510, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",   do:"서울", city:"강남구", radius:100, members:24 },
+  { id:2,  name:"역삼 지점",   code:"SEOYS2026OFF02",    addr:"서울 강남구 역삼로 123",              x:425, y:528, auth:"GPS",    accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",   do:"서울", city:"강남구", radius:150, members:12 },
+  { id:3,  name:"마포 센터",   code:"SEOMPO2026CNT03",   addr:"서울 마포구 마포대로 45",             x:135, y:245, auth:"QR+GPS", accuracy:"부정확",      region:"서울", grade:"B", channel:"대리점", do:"서울", city:"마포구", radius:200, members:8  },
+  { id:4,  name:"광화문 본부", code:"SEOGH2026HQ04",     addr:"서울 종로구 세종대로 168",            x:378, y:128, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",   do:"서울", city:"종로구", radius:80,  members:45 },
+  { id:5,  name:"중구 지점",   code:"SEOJG2026OFF05",    addr:"서울 중구 명동길 14",                x:415, y:228, auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"C", channel:"프랜차이즈", do:"서울", city:"중구", radius:120, members:6 },
+  { id:6,  name:"서대문 센터", code:"SEOSD2026CNT06",    addr:"서울 서대문구 신촌로 77",            x:160, y:140, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점", do:"서울", city:"서대문구", radius:180, members:5 },
+  { id:7,  name:"수원 지점",   code:"GGSW2026OFF07",     addr:"경기 수원시 영통구 월드컵로 206",     x:338, y:576, auth:"QR+GPS", accuracy:"관리자 검증", region:"경기", grade:"A", channel:"직영",   do:"경기도", city:"수원시", radius:100, members:18 },
+  { id:8,  name:"성남 오피스", code:"GGSN2026OFF08",     addr:"경기 성남시 분당구 판교역로 235",     x:358, y:558, auth:"GPS",    accuracy:"건물 수준",   region:"경기", grade:"B", channel:"프랜차이즈", do:"경기도", city:"성남시", radius:150, members:9 },
+  { id:9,  name:"인천 센터",   code:"ICNCNT2026OFF09",   addr:"인천 남동구 인주대로 123",            x:48,  y:198, auth:"QR+GPS", accuracy:"건물 수준",   region:"인천", grade:"B", channel:"대리점", do:"인천", city:"남동구", radius:200, members:7  },
+  { id:10, name:"종로 오피스", code:"SEOJR2026OFF10",    addr:"서울 종로구 율곡로 10",              x:395, y:112, auth:"GPS",    accuracy:"관리자 검증", region:"서울", grade:"A", channel:"직영",   do:"서울", city:"종로구", radius:80,  members:31 },
+  { id:11, name:"용산 지점",   code:"SEOYS2026OFF11",    addr:"서울 용산구 한강대로 405",           x:665, y:245, auth:"GPS",    accuracy:"부정확",      region:"서울", grade:"C", channel:"대리점", do:"서울", city:"용산구", radius:160, members:4  },
+  { id:12, name:"성북 센터",   code:"SEOSB2026CNT12",    addr:"서울 성북구 아리랑로 145",           x:665, y:105, auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",   do:"서울", city:"성북구", radius:120, members:11 },
 ];
 
 const accColors  = { "관리자 검증":"#1D9E75", "건물 수준":"#378ADD", "부정확":"#E24B4A" };
 const authColors = { "GPS":"#1D9E75", "QR+GPS":"#378ADD" };
+const accDpClass = { "관리자 검증":"ip-v", "건물 수준":"ip-b", "부정확":"ip-i" };
 const accBadge   = { "관리자 검증":"acc-v", "건물 수준":"acc-b", "부정확":"acc-i" };
-const accDpClass = { "관리자 검증":"dp-v", "건물 수준":"dp-b", "부정확":"dp-i" };
 const neutral    = "#9ca3af";
-let activeFilters = {}, currentVB = { x:0, y:0, w:700, h:520 };
 
-function switchView(v) {
-  document.getElementById("view-map").style.display = v==='map'?'flex':'none';
-  document.getElementById("view-list").style.display = v==='list'?'flex':'none';
-  document.getElementById("btn-map").classList.toggle("active", v==='map');
-  document.getElementById("btn-list").classList.toggle("active", v==='list');
-}
-function setStatus(el) { document.querySelectorAll(".status-tab").forEach(t=>t.classList.remove("active")); el.classList.add("active"); }
-function countBy(key) { const m={}; worksites.forEach(w=>{m[w[key]]=(m[w[key]]||0)+1;}); return m; }
-function isVisible(w) { for(const[k,v] of Object.entries(activeFilters)){if(w[k]!==v)return false;} return true; }
-function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg",tag); }
+// 필터 정의
+const FILTERS = [
+  { key:"accuracy", label:"위치 정확도", options:["관리자 검증","건물 수준","부정확"], colorMap: accColors },
+  { key:"auth",     label:"출퇴근 인증 방법", options:["GPS","QR+GPS"], colorMap: authColors },
+  { key:"do",       label:"도", options:["서울","경기도","인천"] },
+  { key:"city",     label:"도시", options:["강남구","종로구","마포구","중구","서대문구","용산구","성북구","수원시","성남시","남동구"] },
+  { key:"grade",    label:"등급", options:["A","B","C"] },
+  { key:"channel",  label:"채널", options:["직영","대리점","프랜차이즈"] },
+];
 
-function openDetailPanel(w) {
-  document.getElementById("dp-header-name").textContent = w.name;
-  document.getElementById("dp-code").textContent = w.code;
-  document.getElementById("dp-name").textContent  = w.name;
-  document.getElementById("dp-addr").textContent  = w.addr;
-  const accEl = document.getElementById("dp-accuracy");
-  accEl.className = "dp-val dp-badge " + (accDpClass[w.accuracy]||"");
-  accEl.textContent = w.accuracy;
-  document.getElementById("dp-auth").textContent    = w.auth;
-  document.getElementById("dp-radius").textContent  = w.radius + "m";
-  document.getElementById("dp-grade").textContent   = w.grade;
-  document.getElementById("dp-channel").textContent = w.channel;
-  document.getElementById("dp-link").href = "worksite_detail.html?id=" + w.id;
-  document.getElementById("detail-panel").classList.add("open");
+let activeFilter = "accuracy";  // 디폴트 필터
+let filterValues = {};           // { key: value }
+let currentVB    = { x:0, y:0, w:900, h:600 };
+let editMode     = false;
+let dragging     = null;
+let dragOffset   = { x:0, y:0 };
+let origPositions = {};
+
+// 클러스터
+const CLUSTER_DIST = 28;
+const MAX_ZOOM_W   = 240;
+
+// 패널 페이징
+let panelItems = [], panelPage = 0;
+
+/* ── 페이지 전환 ── */
+function openMapView() {
+  document.getElementById("page-map").classList.add("open");
+  document.getElementById("btn-list-view").classList.remove("active");
+  document.getElementById("btn-map-view").classList.add("active");
+  renderFilterBar();
+  renderAll();
 }
-function closeDetailPanel() {
-  document.getElementById("detail-panel").classList.remove("open");
+function closeMapView() {
+  document.getElementById("page-map").classList.remove("open");
+  document.getElementById("btn-list-view").classList.add("active");
+  document.getElementById("btn-map-view").classList.remove("active");
+  closeInfoPanel();
+  exitEditMode();
 }
+
+/* ── 필터 칩 바 ── */
+function renderFilterBar() {
+  const bar = document.getElementById("filter-bar");
+  bar.innerHTML = "";
+  FILTERS.forEach(f => {
+    const wrap = document.createElement("div");
+    wrap.style.position = "relative";
+
+    const chip = document.createElement("button");
+    chip.className = "filter-chip" + (activeFilter === f.key ? " active" : "");
+    const val = filterValues[f.key];
+    chip.innerHTML = `${f.label}${val ? `: ${val}` : ""} <svg class="chip-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>`;
+    chip.onclick = (e) => { e.stopPropagation(); toggleDropdown(f.key); };
+    wrap.appendChild(chip);
+
+    // 드롭다운
+    const dd = document.createElement("div");
+    dd.className = "chip-dropdown";
+    dd.id = "dd-" + f.key;
+
+    // "전체" 옵션
+    const allItem = document.createElement("div");
+    allItem.className = "dd-item" + (!filterValues[f.key] ? " selected" : "");
+    allItem.innerHTML = `전체 ${!filterValues[f.key] ? '<svg class="dd-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : ''}`;
+    allItem.onclick = (e) => { e.stopPropagation(); setFilterValue(f.key, null); };
+    dd.appendChild(allItem);
+
+    f.options.forEach(opt => {
+      const item = document.createElement("div");
+      item.className = "dd-item" + (filterValues[f.key] === opt ? " selected" : "");
+      const col = f.colorMap ? f.colorMap[opt] : null;
+      item.innerHTML = `<span style="display:flex;align-items:center;gap:6px;">${col ? `<span class="dd-dot" style="background:${col}"></span>` : ""}${opt}</span>${filterValues[f.key]===opt?'<svg class="dd-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':""}`;
+      item.onclick = (e) => { e.stopPropagation(); setFilterValue(f.key, opt); };
+      dd.appendChild(item);
+    });
+    wrap.appendChild(dd);
+    bar.appendChild(wrap);
+  });
+
+  // 수정 모드 버튼 표시 여부
+  updateEditModeBar();
+}
+
+function toggleDropdown(key) {
+  activeFilter = key;
+  document.querySelectorAll(".chip-dropdown").forEach(d => {
+    d.classList.toggle("open", d.id === "dd-" + key && !d.classList.contains("open"));
+    if (d.id !== "dd-" + key) d.classList.remove("open");
+  });
+  renderFilterBar();
+  renderAll();
+}
+
+function setFilterValue(key, val) {
+  if (val === null) delete filterValues[key];
+  else filterValues[key] = val;
+  document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
+  renderFilterBar();
+  renderAll();
+}
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
+});
+
+function updateEditModeBar() {
+  const bar = document.getElementById("edit-mode-bar");
+  // 출퇴근 인증 방법이 활성 필터일 때 수정 버튼 표시
+  if (activeFilter === "auth") {
+    bar.classList.add("visible");
+  } else {
+    bar.classList.remove("visible");
+    if (editMode) cancelEditMode();
+  }
+}
+
+/* ── 수정 모드 ── */
+function startEditMode() {
+  editMode = true;
+  origPositions = {};
+  worksites.forEach(w => { origPositions[w.id] = { x: w.x, y: w.y }; });
+  document.getElementById("btn-start-edit").style.display = "none";
+  document.getElementById("btn-save-edit").style.display = "";
+  document.getElementById("btn-cancel-edit").style.display = "";
+  document.getElementById("edit-hint").classList.add("visible");
+  renderAll();
+}
+function saveEditMode() {
+  exitEditMode();
+  // 실제 구현에서는 서버 저장
+}
+function cancelEditMode() {
+  worksites.forEach(w => {
+    if (origPositions[w.id]) { w.x = origPositions[w.id].x; w.y = origPositions[w.id].y; }
+  });
+  exitEditMode();
+  renderAll();
+}
+function exitEditMode() {
+  editMode = false;
+  document.getElementById("btn-start-edit").style.display = "";
+  document.getElementById("btn-save-edit").style.display = "none";
+  document.getElementById("btn-cancel-edit").style.display = "none";
+  document.getElementById("edit-hint").classList.remove("visible");
+}
+
+/* ── 클러스터링 ── */
+function buildClusters(items) {
+  const used = new Array(items.length).fill(false);
+  const clusters = [];
+  const threshold = CLUSTER_DIST * (currentVB.w / 900);
+  for (let i = 0; i < items.length; i++) {
+    if (used[i]) continue;
+    const group = [items[i]]; used[i] = true;
+    for (let j = i+1; j < items.length; j++) {
+      if (used[j]) continue;
+      const dx = items[i].x - items[j].x, dy = items[i].y - items[j].y;
+      if (Math.sqrt(dx*dx+dy*dy) < threshold) { group.push(items[j]); used[j]=true; }
+    }
+    const cx = group.reduce((s,w)=>s+w.x,0)/group.length;
+    const cy = group.reduce((s,w)=>s+w.y,0)/group.length;
+    clusters.push({ items: group, x: cx, y: cy });
+  }
+  return clusters;
+}
+
+/* ── SVG 좌표 변환 ── */
+function toScreen(vx, vy) {
+  const svg = document.getElementById("map-svg").getBoundingClientRect();
+  return {
+    x: ((vx - currentVB.x) / currentVB.w) * svg.width + svg.left,
+    y: ((vy - currentVB.y) / currentVB.h) * svg.height + svg.top,
+  };
+}
+function toViewBox(sx, sy) {
+  const svg = document.getElementById("map-svg").getBoundingClientRect();
+  return {
+    x: ((sx - svg.left) / svg.width) * currentVB.w + currentVB.x,
+    y: ((sy - svg.top) / svg.height) * currentVB.h + currentVB.y,
+  };
+}
+
+/* ── 핀 렌더링 ── */
+function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
 
 function renderPins() {
-  const layer=document.getElementById("pins-layer"); layer.innerHTML="";
-  worksites.forEach(w=>{
-    const vis=isVisible(w), col=vis?authColors[w.auth]:neutral;
-    const g=ns("g"); g.setAttribute("class","pin"); g.setAttribute("transform",`translate(${w.x},${w.y})`); g.style.cursor=vis?"pointer":"default";
-    if(vis && activeFilters['auth']){
-      const rc=ns("circle");rc.setAttribute("cx","0");rc.setAttribute("cy","0");
-      rc.setAttribute("r",Math.round(w.radius/5));rc.setAttribute("fill",col+"15");
-      rc.setAttribute("stroke",col+"55");rc.setAttribute("stroke-width","1");rc.setAttribute("stroke-dasharray","4 3");g.appendChild(rc);
+  const layer  = document.getElementById("pins-layer");
+  const lLayer = document.getElementById("labels-layer");
+  layer.innerHTML = ""; lLayer.innerHTML = "";
+
+  const visible  = worksites.filter(w => {
+    if (filterValues[activeFilter] && w[activeFilter] !== filterValues[activeFilter]) return false;
+    return true;
+  });
+  const clusters = buildClusters(visible);
+  const isMaxZoom = currentVB.w <= MAX_ZOOM_W;
+
+  clusters.forEach(cl => {
+    const isCluster = cl.items.length > 1;
+    const g = ns("g");
+    g.setAttribute("transform", `translate(${cl.x},${cl.y})`);
+    g.style.cursor = editMode && !isCluster ? "grab" : "pointer";
+
+    if (isCluster) {
+      const outer = ns("circle"); outer.setAttribute("cx","0"); outer.setAttribute("cy","0"); outer.setAttribute("r","20");
+      outer.setAttribute("fill","#1b2135"); outer.setAttribute("opacity","0.82");
+      const inner = ns("circle"); inner.setAttribute("cx","0"); inner.setAttribute("cy","0"); inner.setAttribute("r","15");
+      inner.setAttribute("fill","#2563eb");
+      const txt = ns("text"); txt.setAttribute("x","0"); txt.setAttribute("y","5"); txt.setAttribute("text-anchor","middle");
+      txt.setAttribute("font-size","13"); txt.setAttribute("font-weight","700"); txt.setAttribute("fill","#fff"); txt.setAttribute("font-family","sans-serif");
+      txt.textContent = cl.items.length;
+      g.appendChild(outer); g.appendChild(inner); g.appendChild(txt);
+
+      g.addEventListener("click", () => {
+        if (!isMaxZoom) {
+          const margin = 80;
+          const xs = cl.items.map(w=>w.x), ys = cl.items.map(w=>w.y);
+          const nw = Math.max(Math.max(...xs)-Math.min(...xs)+margin*2, 180);
+          const nh = Math.max(Math.max(...ys)-Math.min(...ys)+margin*2, 135);
+          currentVB = { x: Math.min(...xs)-margin, y: Math.min(...ys)-margin, w: nw, h: nh };
+          document.getElementById("map-svg").setAttribute("viewBox",`${currentVB.x} ${currentVB.y} ${currentVB.w} ${currentVB.h}`);
+          renderPins();
+        } else {
+          openInfoPanel(cl.items);
+        }
+      });
+      g.addEventListener("mouseenter", () => {
+        showHoverTooltip(`근무지 ${cl.items.length}개`, cl.x, cl.y, 50);
+      });
+      g.addEventListener("mouseleave", () => hideHoverTooltip());
+
+    } else {
+      const w = cl.items[0];
+      const col = authColors[w.auth] || neutral;
+
+      // 출퇴근 인증 방법 필터 시 반경 원
+      if (activeFilter === "auth") {
+        const rc = ns("circle"); rc.setAttribute("cx","0"); rc.setAttribute("cy","0");
+        rc.setAttribute("r", Math.round(w.radius/5));
+        rc.setAttribute("fill",col+"15"); rc.setAttribute("stroke",col+"55");
+        rc.setAttribute("stroke-width","1.5"); rc.setAttribute("stroke-dasharray","5 3");
+        g.appendChild(rc);
+      }
+
+      const o = ns("circle"); o.setAttribute("cx","0"); o.setAttribute("cy","0"); o.setAttribute("r","12");
+      o.setAttribute("fill","#fff"); o.setAttribute("stroke",col); o.setAttribute("stroke-width","2.5");
+      const i = ns("circle"); i.setAttribute("cx","0"); i.setAttribute("cy","0"); i.setAttribute("r","5.5");
+      i.setAttribute("fill",col);
+      g.appendChild(o); g.appendChild(i);
+
+      // 수정 모드 드래그
+      if (editMode) {
+        g.style.cursor = "grab";
+        g.addEventListener("mousedown", e => {
+          e.stopPropagation();
+          dragging = w;
+          const vp = toViewBox(e.clientX, e.clientY);
+          dragOffset = { x: vp.x - w.x, y: vp.y - w.y };
+          g.style.cursor = "grabbing";
+        });
+      } else {
+        g.addEventListener("click", () => openInfoPanel([w]));
+        g.addEventListener("mouseenter", () => showHoverTooltip(w.name, w.x, w.y, 44));
+        g.addEventListener("mouseleave", () => hideHoverTooltip());
+      }
+      layer.appendChild(g);
+
+      // 필터 라벨 (항상 표시)
+      const filterDef = FILTERS.find(f => f.key === activeFilter);
+      if (filterDef && w[activeFilter]) {
+        const val = w[activeFilter];
+        const col2 = filterDef.colorMap ? filterDef.colorMap[val] : "#1b2135";
+        const labelG = ns("g");
+        labelG.setAttribute("transform", `translate(${cl.x},${cl.y - 22})`);
+        labelG.style.pointerEvents = "none";
+        const rect = ns("rect");
+        const textEl = ns("text");
+        textEl.setAttribute("x","0"); textEl.setAttribute("y","0");
+        textEl.setAttribute("text-anchor","middle"); textEl.setAttribute("font-size","9.5");
+        textEl.setAttribute("fill","#fff"); textEl.setAttribute("font-family","sans-serif");
+        textEl.setAttribute("font-weight","500");
+        textEl.textContent = val;
+        lLayer.appendChild(labelG);
+        // 배경 rect는 텍스트 길이에 맞게 대략 계산
+        const tw = val.length * 6.5 + 12;
+        rect.setAttribute("x", -tw/2); rect.setAttribute("y","-12");
+        rect.setAttribute("width", tw); rect.setAttribute("height","16");
+        rect.setAttribute("rx","4"); rect.setAttribute("fill", col2 || "#1b2135");
+        labelG.appendChild(rect); labelG.appendChild(textEl);
+      }
+      return;
     }
-    const o=ns("circle");o.setAttribute("cx","0");o.setAttribute("cy","0");o.setAttribute("r","11");o.setAttribute("fill","#fff");o.setAttribute("stroke",col);o.setAttribute("stroke-width","2");
-    const i=ns("circle");i.setAttribute("cx","0");i.setAttribute("cy","0");i.setAttribute("r","5");i.setAttribute("fill",col);
-    g.appendChild(o);g.appendChild(i);
-    g.addEventListener("mouseenter",()=>{
-      if(!vis)return;
-      const tt=document.getElementById("tooltip"),svgR=document.getElementById("map-svg").getBoundingClientRect(),mapR=document.getElementById("map-area").getBoundingClientRect();
-      const px=((w.x-currentVB.x)/currentVB.w)*svgR.width+svgR.left-mapR.left,py=((w.y-currentVB.y)/currentVB.h)*svgR.height+svgR.top-mapR.top;
-      tt.style.display="block";tt.textContent=w.name;
-      tt.style.left=(px-tt.offsetWidth/2)+"px";tt.style.top=(py-44)+"px";
-    });
-    g.addEventListener("mouseleave",()=>{document.getElementById("tooltip").style.display="none";});
-    g.addEventListener("click",()=>{ if(vis) openDetailPanel(w); });
     layer.appendChild(g);
   });
 }
 
-function renderFilter(cid,key,colorMap){
-  const c=document.getElementById(cid),counts=countBy(key);c.innerHTML="";
-  Object.entries(counts).forEach(([val,cnt])=>{
-    const div=document.createElement("div");div.className="fitem"+(activeFilters[key]===val?" active":"");
-    const dc=colorMap?(colorMap[val]||neutral):neutral;
-    div.innerHTML=`<div class="fitem-left"><span class="fdot" style="background:${dc}"></span><span>${val}</span></div><span class="fcnt">${cnt}</span>`;
-    div.onclick=()=>{if(activeFilters[key]===val)delete activeFilters[key];else activeFilters[key]=val;renderAll();};
-    c.appendChild(div);
-  });
+/* ── 드래그 이벤트 ── */
+const mapCanvas = document.getElementById("map-canvas");
+mapCanvas.addEventListener("mousemove", e => {
+  if (!dragging) return;
+  const vp = toViewBox(e.clientX, e.clientY);
+  dragging.x = vp.x - dragOffset.x;
+  dragging.y = vp.y - dragOffset.y;
+  renderPins();
+});
+mapCanvas.addEventListener("mouseup", () => { dragging = null; });
+mapCanvas.addEventListener("mouseleave", () => { dragging = null; });
+
+/* ── 호버 툴팁 ── */
+function showHoverTooltip(text, vx, vy, offsetY) {
+  const tt = document.getElementById("hover-tooltip");
+  const canvas = document.getElementById("map-canvas").getBoundingClientRect();
+  const svg = document.getElementById("map-svg").getBoundingClientRect();
+  const px = ((vx - currentVB.x) / currentVB.w) * svg.width + svg.left - canvas.left;
+  const py = ((vy - currentVB.y) / currentVB.h) * svg.height + svg.top - canvas.top;
+  tt.style.display = "block";
+  tt.textContent = text;
+  tt.style.left = (px - tt.offsetWidth/2) + "px";
+  tt.style.top  = (py - offsetY) + "px";
+}
+function hideHoverTooltip() {
+  document.getElementById("hover-tooltip").style.display = "none";
 }
 
-function renderActiveFilters(){
-  const bar=document.getElementById("active-filters"),entries=Object.entries(activeFilters);
-  if(!entries.length){bar.classList.remove("visible");return;}
-  bar.classList.add("visible");bar.innerHTML="";
-  entries.forEach(([key,val])=>{
-    const tag=document.createElement("span");tag.className="ftag";tag.innerHTML=`${val} <span style="opacity:0.6">✕</span>`;tag.onclick=()=>{delete activeFilters[key];renderAll();};bar.appendChild(tag);
-  });
-  const r=document.createElement("button");r.className="reset-btn";r.textContent="전체 초기화";r.onclick=()=>{activeFilters={};renderAll();};bar.appendChild(r);
+/* ── 정보 패널 ── */
+function openInfoPanel(items) {
+  panelItems = items; panelPage = 0;
+  renderInfoPanel();
+  document.getElementById("info-panel").classList.add("open");
+}
+function closeInfoPanel() {
+  document.getElementById("info-panel").classList.remove("open");
+}
+function changePage(dir) {
+  panelPage = Math.max(0, Math.min(panelItems.length-1, panelPage+dir));
+  renderInfoPanel();
+}
+function renderInfoPanel() {
+  const w = panelItems[panelPage];
+  const total = panelItems.length;
+  document.getElementById("ip-title").textContent = total > 1 ? `근무지 ${total}개` : w.name;
+  document.getElementById("ip-paging").style.display = total > 1 ? "flex" : "none";
+  document.getElementById("ip-page-info").textContent = `${panelPage+1} / ${total}`;
+  document.getElementById("ip-prev").disabled = panelPage === 0;
+  document.getElementById("ip-next").disabled = panelPage === total-1;
+  document.getElementById("ip-code").textContent = w.code;
+  document.getElementById("ip-name").textContent  = w.name;
+  document.getElementById("ip-addr").textContent  = w.addr;
+  const accEl = document.getElementById("ip-accuracy");
+  accEl.className = "ip-val ip-badge " + (accDpClass[w.accuracy]||"");
+  accEl.textContent = w.accuracy;
+  document.getElementById("ip-auth").textContent    = w.auth;
+  document.getElementById("ip-radius").textContent  = w.radius + "m";
+  document.getElementById("ip-grade").textContent   = w.grade;
+  document.getElementById("ip-channel").textContent = w.channel;
+  document.getElementById("ip-link").href = "worksite_detail.html?id=" + w.id;
 }
 
-function renderTable(){
-  const tbody=document.getElementById("table-body");tbody.innerHTML="";
-  worksites.forEach((w,i)=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td><input type="checkbox"></td><td style="color:#9ca3af;font-size:12px;">${i+1}</td><td style="font-weight:500;color:#1a1a1a;cursor:pointer;" onclick="window.open('worksite_detail.html?id=${w.id}','_blank')">${w.name}</td><td style="color:#6b7280;font-size:12px;">${w.code}</td><td style="color:#6b7280;font-size:12px;">${w.addr}</td><td><span class="acc-badge ${accBadge[w.accuracy]}">${w.accuracy}</span></td><td style="color:#374151;">▲ ${w.members}</td><td style="color:#374151;">${w.auth}</td>`;
+/* ── 줌 ── */
+function zoom(f) {
+  const cx = currentVB.x+currentVB.w/2, cy = currentVB.y+currentVB.h/2;
+  const nw = Math.min(Math.max(currentVB.w*f, MAX_ZOOM_W), 1200);
+  const nh = Math.min(Math.max(currentVB.h*f, MAX_ZOOM_W*600/900), 900);
+  currentVB = { x: cx-nw/2, y: cy-nh/2, w: nw, h: nh };
+  document.getElementById("map-svg").setAttribute("viewBox",`${currentVB.x} ${currentVB.y} ${currentVB.w} ${currentVB.h}`);
+  renderPins();
+}
+document.getElementById("zoom-in").onclick  = () => zoom(0.75);
+document.getElementById("zoom-out").onclick = () => zoom(1.33);
+
+/* ── 목록 테이블 ── */
+function renderTable() {
+  const tbody = document.getElementById("list-table-body"); tbody.innerHTML = "";
+  worksites.forEach((w,i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><input type="checkbox"></td><td style="color:#9ca3af;font-size:12px;">${i+1}</td><td style="font-weight:500;color:#1a1a1a;cursor:pointer;" onclick="window.open('worksite_detail.html?id=${w.id}','_blank')">${w.name}</td><td style="color:#6b7280;font-size:12px;">${w.code}</td><td style="color:#6b7280;font-size:12px;">${w.addr}</td><td><span class="acc-badge ${accBadge[w.accuracy]}">${w.accuracy}</span></td><td>▲ ${w.members}</td><td>${w.auth}</td>`;
     tbody.appendChild(tr);
   });
 }
 
-function renderAll(){renderPins();renderFilter("filter-accuracy","accuracy",accColors);renderFilter("filter-auth","auth",authColors);renderFilter("filter-region","region",null);renderFilter("filter-grade","grade",null);renderFilter("filter-channel","channel",null);renderActiveFilters();}
-
-function zoom(f){
-  const cx=currentVB.x+currentVB.w/2,cy=currentVB.y+currentVB.h/2;
-  const nw=Math.min(Math.max(currentVB.w*f,200),1000),nh=Math.min(Math.max(currentVB.h*f,150),750);
-  currentVB={x:cx-nw/2,y:cy-nh/2,w:nw,h:nh};
-  document.getElementById("map-svg").setAttribute("viewBox",`${currentVB.x} ${currentVB.y} ${currentVB.w} ${currentVB.h}`);
-}
-document.getElementById("zoom-in").onclick=()=>zoom(0.75);
-document.getElementById("zoom-out").onclick=()=>zoom(1.33);
-renderAll();renderTable();
+function renderAll() { renderPins(); }
+renderTable();
 </script>
 </body>
 </html>
