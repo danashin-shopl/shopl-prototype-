@@ -83,8 +83,19 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .map-close-btn:hover { background: #f3f4f6; }
 .map-title { background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 600; color: #1a1a1a; pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,0.12); white-space: nowrap; }
 
+/* 필터 칩 바 래퍼 */
+.filter-bar-wrap { position: absolute; top: 12px; left: 192px; right: 16px; z-index: 200; display: flex; align-items: center; gap: 6px; pointer-events: all; }
+.filter-bar-arrow { width: 28px; height: 28px; background: #fff; border: 1px solid #d1d5db; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.12); color: #374151; transition: opacity 0.15s; }
+.filter-bar-arrow:hover { background: #f3f4f6; }
+.filter-bar-arrow.disabled { opacity: 0.35; cursor: not-allowed; background: #f3f4f6; }
+.filter-bar-outer { flex: 1; position: relative; overflow: hidden; }
+.filter-bar-outer::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 24px; background: linear-gradient(to right, rgba(220,232,240,0.9), transparent); z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.filter-bar-outer::after  { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(to left, rgba(220,232,240,0.95), transparent); z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.filter-bar-outer.fade-left::before  { opacity: 1; }
+.filter-bar-outer.fade-right::after  { opacity: 1; }
+
 /* 필터 칩 바 */
-.filter-bar { position: absolute; top: 12px; left: 192px; right: 16px; z-index: 200; display: flex; align-items: center; gap: 6px; overflow-x: auto; overflow-y: visible; pointer-events: all; flex-wrap: nowrap; scrollbar-width: none; -ms-overflow-style: none; }
+.filter-bar { display: flex; align-items: center; gap: 6px; overflow-x: auto; overflow-y: visible; flex-wrap: nowrap; scrollbar-width: none; -ms-overflow-style: none; padding: 2px 0; }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-chip { display: flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #374151; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.1s; flex-shrink: 0; }
 .filter-chip:hover { background: #f9fafb; }
@@ -309,7 +320,17 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
     <span class="map-title">근무지</span>
   </div>
 
-  <div class="filter-bar" id="filter-bar"></div>
+  <div class="filter-bar-wrap">
+    <button class="filter-bar-arrow disabled" id="filter-arrow-left" onclick="scrollFilterBar(-1)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="filter-bar-outer fade-right" id="filter-bar-outer">
+      <div class="filter-bar" id="filter-bar"></div>
+    </div>
+    <button class="filter-bar-arrow" id="filter-arrow-right" onclick="scrollFilterBar(1)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
 
   <!-- 수정 모드 버튼 -->
   <div class="edit-wrap" id="edit-wrap">
@@ -533,6 +554,12 @@ function openMapView() {
   document.getElementById("page-map").classList.add("open");
   renderFilterBar();
   renderAll();
+  // 필터 바 스크롤 이벤트 등록 (최초 1회)
+  const fb = document.getElementById("filter-bar");
+  if (fb && !fb._scrollBound) {
+    fb.addEventListener("scroll", updateFilterBarState);
+    fb._scrollBound = true;
+  }
 }
 function closeMapView() {
   document.getElementById("page-map").classList.remove("open");
@@ -616,12 +643,41 @@ function toggleDropdown(key) {
   }
 }
 
+// 필터 바 렌더 후 상태 업데이트
+const _origRenderFilterBar = renderFilterBar;
+renderFilterBar = function() {
+  _origRenderFilterBar();
+  setTimeout(updateFilterBarState, 0);
+};
+
 function setFilterValue(key, val) {
   filterValues = {};
   if (val !== null) filterValues[key] = val;
   document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
   renderFilterBar();
   renderAll();
+}
+
+function scrollFilterBar(dir) {
+  const bar = document.getElementById("filter-bar");
+  bar.scrollBy({ left: dir * 160, behavior: "smooth" });
+  setTimeout(updateFilterBarState, 300);
+}
+
+function updateFilterBarState() {
+  const bar   = document.getElementById("filter-bar");
+  const outer = document.getElementById("filter-bar-outer");
+  const btnL  = document.getElementById("filter-arrow-left");
+  const btnR  = document.getElementById("filter-arrow-right");
+  if (!bar || !outer) return;
+  const atLeft  = bar.scrollLeft <= 2;
+  const atRight = bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2;
+  btnL.classList.toggle("disabled", atLeft);
+  btnR.classList.toggle("disabled", atRight);
+  btnL.disabled = atLeft;
+  btnR.disabled = atRight;
+  outer.classList.toggle("fade-left",  !atLeft);
+  outer.classList.toggle("fade-right", !atRight);
 }
 
 document.addEventListener("click", e => {
