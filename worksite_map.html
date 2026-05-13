@@ -630,9 +630,13 @@ function exitEditMode() {
 }
 
 /* ── 팝오버 ── */
+let popoverItems = [], popoverPage = 0;
+let popoverOriginal = {}; // 변경 감지용 원본값
+
 function setAuthToggle(val) {
   document.getElementById("ep-auth-gps").classList.toggle("active", val === "GPS");
   document.getElementById("ep-auth-qr").classList.toggle("active",  val === "QR+GPS");
+  checkPopoverChanged();
 }
 
 function validateLatLng(val, isLat) {
@@ -641,12 +645,47 @@ function validateLatLng(val, isLat) {
   return isLat ? (n >= -90 && n <= 90) : (n >= -180 && n <= 180);
 }
 
-function openPopover(w, screenX, screenY) {
-  editingWorksite = w;
-  const canvas = document.getElementById("map-canvas").getBoundingClientRect();
-  const pop = document.getElementById("edit-popover");
+function checkPopoverChanged() {
+  const orig = popoverOriginal;
+  if (!orig) return;
+  const latVal = document.getElementById("ep-lat-input").value;
+  const lngVal = document.getElementById("ep-lng-input").value;
+  const rVal   = document.getElementById("ep-radius-input").value;
+  const authVal = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
+  const changed = latVal != orig.lat || lngVal != orig.lng || parseInt(rVal) !== orig.radius || authVal !== orig.auth;
+  document.getElementById("ep-save-btn").disabled = !changed;
+  document.getElementById("ep-save-btn").style.opacity = changed ? "1" : "0.45";
+  document.getElementById("ep-save-btn").style.cursor = changed ? "pointer" : "not-allowed";
+}
 
-  document.getElementById("ep-title").textContent = w.name;
+function renderPopoverPage() {
+  const w = popoverItems[popoverPage];
+  popoverOriginal = { lat: w.lat, lng: w.lng, radius: w.radius, auth: w.auth };
+
+  document.getElementById("ep-title").textContent = popoverItems.length > 1
+    ? `${w.name} (${popoverPage+1}/${popoverItems.length})`
+    : w.name;
+
+  // 페이징 버튼
+  let pagingEl = document.getElementById("ep-paging");
+  if (!pagingEl) {
+    const titleEl = document.getElementById("ep-title");
+    const row = document.createElement("div");
+    row.id = "ep-paging";
+    row.style.cssText = "display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;";
+    titleEl.style.marginBottom = "0";
+    titleEl.parentNode.insertBefore(row, titleEl.nextSibling);
+    pagingEl = row;
+  }
+  if (popoverItems.length > 1) {
+    pagingEl.style.display = "flex";
+    pagingEl.innerHTML = `
+      <button onclick="changePopoverPage(-1)" style="background:#f3f4f6;border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:13px;color:#374151;" ${popoverPage===0?"disabled":""}>‹</button>
+      <span style="font-size:11px;color:#9ca3af;">${popoverPage+1} / ${popoverItems.length}</span>
+      <button onclick="changePopoverPage(1)" style="background:#f3f4f6;border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:13px;color:#374151;" ${popoverPage===popoverItems.length-1?"disabled":""}>›</button>`;
+  } else {
+    pagingEl.style.display = "none";
+  }
 
   const latInput = document.getElementById("ep-lat-input");
   const lngInput = document.getElementById("ep-lng-input");
@@ -659,20 +698,25 @@ function openPopover(w, screenX, screenY) {
   ["ep-lat-input","ep-lng-input","ep-radius-input"].forEach(id => document.getElementById(id).classList.remove("error"));
   ["ep-lat-error","ep-lng-error","ep-radius-error"].forEach(id => document.getElementById(id).classList.remove("show"));
 
-  // 위도 blur → pin 이동
+  // 저장 버튼 초기 비활성화
+  document.getElementById("ep-save-btn").disabled = true;
+  document.getElementById("ep-save-btn").style.opacity = "0.45";
+  document.getElementById("ep-save-btn").style.cursor = "not-allowed";
+
+  // 위도 blur
   latInput.onblur = () => {
     const valid = validateLatLng(latInput.value, true);
     latInput.classList.toggle("error", !valid);
     document.getElementById("ep-lat-error").classList.toggle("show", !valid);
     if (valid) {
       w.lat = parseFloat(latInput.value);
-      // 위경도 → SVG 좌표 역산 (목업 기준 근사)
       w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
       w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
       renderPins();
     }
+    checkPopoverChanged();
   };
-  // 경도 blur → pin 이동
+  // 경도 blur
   lngInput.onblur = () => {
     const valid = validateLatLng(lngInput.value, false);
     lngInput.classList.toggle("error", !valid);
@@ -683,14 +727,33 @@ function openPopover(w, screenX, screenY) {
       w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
       renderPins();
     }
+    checkPopoverChanged();
   };
+  // 반경/인증방법 변경 감지
+  document.getElementById("ep-radius-input").oninput = checkPopoverChanged;
 
+  document.getElementById("ep-save-btn").onclick = () => savePopover(w);
+}
+
+function changePopoverPage(dir) {
+  popoverPage = Math.max(0, Math.min(popoverItems.length-1, popoverPage+dir));
+  renderPopoverPage();
+}
+
+function openPopover(w, screenX, screenY, items) {
+  editingWorksite = w;
+  popoverItems = items || [w];
+  popoverPage  = popoverItems.findIndex(i => i.id === w.id);
+  if (popoverPage < 0) popoverPage = 0;
+
+  const canvas = document.getElementById("map-canvas").getBoundingClientRect();
+  const pop = document.getElementById("edit-popover");
   let left = screenX + 14;
   let top  = screenY - 20;
-  pop.style.left = Math.min(left, canvas.width - 270) + "px";
-  pop.style.top  = Math.max(10, Math.min(top, canvas.height - 340)) + "px";
+  pop.style.left = Math.min(left, canvas.width - 280) + "px";
+  pop.style.top  = Math.max(10, Math.min(top, canvas.height - 360)) + "px";
   pop.classList.add("open");
-  document.getElementById("ep-save-btn").onclick = () => savePopover(w);
+  renderPopoverPage();
 }
 
 function closePopover() {
@@ -714,7 +777,7 @@ function savePopover(w) {
   const rVal   = parseInt(document.getElementById("ep-radius-input").value);
   const latOk  = validateLatLng(latVal, true);
   const lngOk  = validateLatLng(lngVal, false);
-  const rOk    = rVal >= 40 && rVal <= 10000;
+  const rOk    = !isNaN(rVal) && rVal >= 40 && rVal <= 10000;
 
   document.getElementById("ep-lat-input").classList.toggle("error", !latOk);
   document.getElementById("ep-lat-error").classList.toggle("show", !latOk);
@@ -732,7 +795,13 @@ function savePopover(w) {
     w.auth   = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
     w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
     w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
-    closePopover();
+    // 다음 근무지 있으면 페이지 유지, 없으면 닫기
+    if (popoverItems.length > 1 && popoverPage < popoverItems.length - 1) {
+      popoverPage++;
+      renderPopoverPage();
+    } else {
+      closePopover();
+    }
     renderAll();
     showToast("저장되었습니다.");
   };
@@ -818,7 +887,12 @@ function renderPins() {
           renderPins();
         } else {
           const sorted = [...cl.items].sort((a,b) => a.name.localeCompare(b.name, 'ko'));
-          openInfoPanel(sorted);
+          if (editMode) {
+            const sc = toScreen(cl.x, cl.y);
+            openPopover(sorted[0], sc.x, sc.y, sorted);
+          } else {
+            openInfoPanel(sorted);
+          }
         }
       });
       g.addEventListener("mouseenter", () => showHoverTooltip(`근무지 ${cl.items.length}개`, cl.x, cl.y, 50));
@@ -872,12 +946,14 @@ function renderPins() {
         g.addEventListener("click", e => {
           e.stopPropagation();
           const sc = toScreen(w.x, w.y);
-          openPopover(w, sc.x, sc.y);
+          openPopover(w, sc.x, sc.y, [w]);
         });
       } else {
-        g.addEventListener("click", () => openInfoPanel([w]));
-        g.addEventListener("mouseenter", () => showHoverTooltip(w.name, w.x, w.y, 44));
-        g.addEventListener("mouseleave", hideHoverTooltip);
+        if (!editMode) {
+          g.addEventListener("click", () => openInfoPanel([w]));
+          g.addEventListener("mouseenter", () => showHoverTooltip(w.name, w.x, w.y, 44));
+          g.addEventListener("mouseleave", hideHoverTooltip);
+        }
       }
       layer.appendChild(g);
 
@@ -965,7 +1041,7 @@ mapCanvas.addEventListener("mousemove", e => {
 mapCanvas.addEventListener("mouseup", e => {
   if (dragging) {
     const sc = toScreen(dragging.x, dragging.y);
-    if (editMode) openPopover(dragging, sc.x, sc.y);
+    if (editMode) openPopover(dragging, sc.x, sc.y, [dragging]);
     dragging = null;
   }
   panning = false; panStart = null; mapCanvas.style.cursor = editMode ? "default" : "grab";
