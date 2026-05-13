@@ -653,7 +653,7 @@ function checkPopoverChanged() {
   const lngVal  = parseFloat(document.getElementById("ep-lng-input").value);
   const rVal    = parseInt(document.getElementById("ep-radius-input").value);
   const authVal = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
-  const changed = latVal !== orig.lat || lngVal !== orig.lng || rVal !== orig.radius || authVal !== orig.auth;
+  const changed = orig._pinMoved || latVal !== orig.lat || lngVal !== orig.lng || rVal !== orig.radius || authVal !== orig.auth;
   document.getElementById("ep-save-btn").disabled = !changed;
   document.getElementById("ep-save-btn").style.opacity = changed ? "1" : "0.45";
   document.getElementById("ep-save-btn").style.cursor = changed ? "pointer" : "not-allowed";
@@ -1102,14 +1102,17 @@ mapCanvas.addEventListener("mouseup", e => {
     dragging = null;
     if (editMode) {
       const sc = toScreen(w.x, w.y);
-      // preSnapshot: 드래그 시작 전 origPositions 값 (lat/lng는 목업이라 근사)
-      const orig = origPositions[w.id];
-      const preSnapshot = orig
-        ? { lat: orig.lat !== undefined ? orig.lat : w.lat,
-            lng: orig.lng !== undefined ? orig.lng : w.lng,
-            radius: orig.radius, auth: w.auth,
-            _origX: orig.x, _origY: orig.y }
-        : { lat: w.lat, lng: w.lng, radius: w.radius, auth: w.auth };
+      const origPos = origPositions[w.id];
+      const posChanged = origPos && (Math.abs(w.x - origPos.x) > 0.5 || Math.abs(w.y - origPos.y) > 0.5);
+      const preSnapshot = {
+        lat: origPos ? origPos.lat : w.lat,
+        lng: origPos ? origPos.lng : w.lng,
+        radius: origPos ? origPos.radius : w.radius,
+        auth: origPos ? origPos.auth : w.auth,
+        _origX: origPos ? origPos.x : w.x,
+        _origY: origPos ? origPos.y : w.y,
+        _pinMoved: posChanged
+      };
       openPopover(w, sc.x, sc.y, [w], preSnapshot);
     }
   }
