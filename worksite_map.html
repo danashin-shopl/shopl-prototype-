@@ -538,6 +538,7 @@ const FILTERS = [
 ];
 
 let activeFilter = "members";
+let selectedPinIds = new Set(); // 현재 패널에 표시 중인 근무지 ID
 let filterValues = {};
 let currentVB    = { x:0, y:0, w:900, h:600 };
 let editMode     = false;
@@ -1085,8 +1086,18 @@ function renderPins() {
         }
         g.appendChild(rc);
       }
-      const o = ns("circle"); o.setAttribute("cx","0"); o.setAttribute("cy","0"); o.setAttribute("r","12"); o.setAttribute("fill","#fff"); o.setAttribute("stroke",col); o.setAttribute("stroke-width","2.5");
-      const i = ns("circle"); i.setAttribute("cx","0"); i.setAttribute("cy","0"); i.setAttribute("r","5.5"); i.setAttribute("fill",col);
+      const isSelected = selectedPinIds.has(w.id);
+      // 선택 상태: 외곽 링
+      if (isSelected) {
+        const ring = ns("circle"); ring.setAttribute("cx","0"); ring.setAttribute("cy","0"); ring.setAttribute("r","19");
+        ring.setAttribute("fill","none"); ring.setAttribute("stroke",col); ring.setAttribute("stroke-width","2"); ring.setAttribute("opacity","0.4");
+        g.appendChild(ring);
+      }
+      // 선택 상태: pin 크기 확대
+      const pr = isSelected ? "15" : "12";
+      const ir = isSelected ? "6.5" : "5.5";
+      const o = ns("circle"); o.setAttribute("cx","0"); o.setAttribute("cy","0"); o.setAttribute("r",pr); o.setAttribute("fill","#fff"); o.setAttribute("stroke",col); o.setAttribute("stroke-width","2.5");
+      const i = ns("circle"); i.setAttribute("cx","0"); i.setAttribute("cy","0"); i.setAttribute("r",ir); i.setAttribute("fill",col);
       g.appendChild(o); g.appendChild(i);
 
       if (editMode) {
@@ -1144,10 +1155,16 @@ function hideHoverTooltip() { document.getElementById("hover-tooltip").style.dis
 /* ── 정보 패널 ── */
 function openInfoPanel(items) {
   panelItems = items; panelPage = 0;
+  selectedPinIds = new Set(items.map(w => w.id));
   renderInfoPanel();
+  renderPins();
   document.getElementById("info-panel").classList.add("open");
 }
-function closeInfoPanel() { document.getElementById("info-panel").classList.remove("open"); }
+function closeInfoPanel() {
+  document.getElementById("info-panel").classList.remove("open");
+  selectedPinIds = new Set();
+  renderPins();
+}
 function changePage(dir) { panelPage = Math.max(0, Math.min(panelItems.length-1, panelPage+dir)); renderInfoPanel(); }
 function renderInfoPanel() {
   const w = panelItems[panelPage], total = panelItems.length;
