@@ -965,8 +965,7 @@ function renderPins() {
           }
         }
       });
-      g.addEventListener("mouseenter", () => showHoverTooltip(`근무지 ${cl.items.length}개`, cl.x, cl.y, 50));
-      g.addEventListener("mouseleave", hideHoverTooltip);
+
     } else {
       const w = cl.items[0];
       const col = authColors[w.auth] || neutral;
@@ -1049,8 +1048,6 @@ function renderPins() {
       } else {
         if (!editMode) {
           g.addEventListener("click", () => openInfoPanel([w]));
-          g.addEventListener("mouseenter", () => showHoverTooltip(w.name, w.x, w.y, 44));
-          g.addEventListener("mouseleave", hideHoverTooltip);
         }
       }
       layer.appendChild(g);
