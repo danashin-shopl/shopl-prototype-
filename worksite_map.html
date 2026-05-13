@@ -501,10 +501,14 @@ function renderFilterBar() {
 function toggleDropdown(key) {
   const dd = document.getElementById("dd-" + key);
   const wasOpen = dd && dd.classList.contains("open");
+  const isSameChip = activeFilter === key;
+  // 모든 드롭다운 닫기
+  document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
   activeFilter = key;
   renderFilterBar();
   renderAll();
-  if (!wasOpen) {
+  // 같은 칩을 클릭했고 닫혀있던 경우에만 드롭다운 열기
+  if (isSameChip && !wasOpen) {
     setTimeout(() => {
       const el = document.getElementById("dd-" + key);
       if (el) el.classList.add("open");
