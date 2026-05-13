@@ -495,7 +495,7 @@ const neutral    = "#9ca3af";
 
 // 필터 정의 - 디폴트: 구성원 배정
 const FILTERS = [
-  { key:"members", label:"구성원 배정", options:["배정","미배정"], colorMap: null,
+  { key:"members", label:"구성원 배정", options:["배정","미배정"], colorMap: {"배정":"#2563eb", "미배정":"#9ca3af"},
     getVal: w => w.members > 0 ? "배정" : "미배정",
     getLabel: w => w.members > 0 ? `${w.members.toLocaleString()}명` : "미배정" },
   { key:"accuracy", label:"위치 정확도", options:["관리자 검증","건물 수준","부정확"], colorMap: accColors },
@@ -1026,7 +1026,12 @@ function renderPins() {
 
     } else {
       const w = cl.items[0];
-      const col = authColors[w.auth] || neutral;
+      let col;
+      if (activeFilter === "members") {
+        col = w.members > 0 ? "#2563eb" : neutral;
+      } else {
+        col = authColors[w.auth] || neutral;
+      }
       // 출퇴근 인증 방법 필터 시 반경 원
       if (activeFilter === "auth") {
         const rc = ns("circle"); rc.setAttribute("cx","0"); rc.setAttribute("cy","0"); rc.setAttribute("r", Math.round(w.radius/5));
