@@ -746,9 +746,19 @@ function validateLatLng(val, isLat) {
 function checkPopoverChanged() {
   const orig = popoverOriginal;
   if (!orig) return;
-  const latVal  = parseFloat(document.getElementById("ep-lat-input").value);
-  const lngVal  = parseFloat(document.getElementById("ep-lng-input").value);
-  const rVal    = parseInt(document.getElementById("ep-radius-input").value);
+  const latStr  = document.getElementById("ep-lat-input").value.trim();
+  const lngStr  = document.getElementById("ep-lng-input").value.trim();
+  const rStr    = document.getElementById("ep-radius-input").value.trim();
+  // 필수값 비어있으면 무조건 비활성
+  if (!latStr || !lngStr || !rStr) {
+    document.getElementById("ep-save-btn").disabled = true;
+    document.getElementById("ep-save-btn").style.opacity = "0.45";
+    document.getElementById("ep-save-btn").style.cursor = "not-allowed";
+    return;
+  }
+  const latVal  = parseFloat(latStr);
+  const lngVal  = parseFloat(lngStr);
+  const rVal    = parseInt(rStr);
   const authVal = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
   const changed = orig._pinMoved || latVal !== orig.lat || lngVal !== orig.lng || rVal !== orig.radius || authVal !== orig.auth;
   document.getElementById("ep-save-btn").disabled = !changed;
