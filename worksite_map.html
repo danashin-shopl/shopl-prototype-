@@ -652,15 +652,17 @@ function checkPopoverChanged() {
   const lngVal = document.getElementById("ep-lng-input").value;
   const rVal   = document.getElementById("ep-radius-input").value;
   const authVal = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
-  const changed = latVal != orig.lat || lngVal != orig.lng || parseInt(rVal) !== orig.radius || authVal !== orig.auth;
+  // pin 드래그로 위치가 변경된 경우(_posChanged)도 changed로 처리
+  const changed = orig._posChanged || latVal != orig.lat || lngVal != orig.lng || parseInt(rVal) !== orig.radius || authVal !== orig.auth;
   document.getElementById("ep-save-btn").disabled = !changed;
   document.getElementById("ep-save-btn").style.opacity = changed ? "1" : "0.45";
   document.getElementById("ep-save-btn").style.cursor = changed ? "pointer" : "not-allowed";
 }
 
-function renderPopoverPage() {
+function renderPopoverPage(forcedOriginal) {
   const w = popoverItems[popoverPage];
-  popoverOriginal = { lat: w.lat, lng: w.lng, radius: w.radius, auth: w.auth };
+  // pin 드래그로 열린 경우 원본은 이동 전 값(origPositions) 기준
+  popoverOriginal = forcedOriginal || { lat: w.lat, lng: w.lng, radius: w.radius, auth: w.auth };
 
   document.getElementById("ep-title").textContent = popoverItems.length > 1
     ? `${w.name} (${popoverPage+1}/${popoverItems.length})`
@@ -740,7 +742,7 @@ function changePopoverPage(dir) {
   renderPopoverPage();
 }
 
-function openPopover(w, screenX, screenY, items) {
+function openPopover(w, screenX, screenY, items, forcedOriginal) {
   editingWorksite = w;
   popoverItems = items || [w];
   popoverPage  = popoverItems.findIndex(i => i.id === w.id);
@@ -753,7 +755,7 @@ function openPopover(w, screenX, screenY, items) {
   pop.style.left = Math.min(left, canvas.width - 280) + "px";
   pop.style.top  = Math.max(10, Math.min(top, canvas.height - 360)) + "px";
   pop.classList.add("open");
-  renderPopoverPage();
+  renderPopoverPage(forcedOriginal);
 }
 
 function closePopover() {
@@ -946,11 +948,14 @@ function renderPins() {
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
               } else {
-                openPopover(w, sc.x, sc.y, [w]);
+                // 반경 변경 원본값: 드래그 시작 전 radius
+                const forcedOriginal = { lat: w.lat, lng: w.lng, radius: startR, auth: w.auth };
+                openPopover(w, sc.x, sc.y, [w], forcedOriginal);
                 if (outOfRange) {
                   setTimeout(() => {
                     document.getElementById("ep-radius-input").classList.add("error");
                     document.getElementById("ep-radius-error").classList.add("show");
+                    checkPopoverChanged();
                   }, 0);
                 }
               }
@@ -1073,7 +1078,15 @@ mapCanvas.addEventListener("mousemove", e => {
 mapCanvas.addEventListener("mouseup", e => {
   if (dragging) {
     const sc = toScreen(dragging.x, dragging.y);
-    if (editMode) openPopover(dragging, sc.x, sc.y, [dragging]);
+    if (editMode) {
+      // 원본값은 드래그 전 origPositions 기준
+      const orig = origPositions[dragging.id];
+      const forcedOriginal = orig
+        ? { lat: dragging.lat, lng: dragging.lng, radius: dragging.radius, auth: dragging.auth,
+            _posChanged: true }
+        : null;
+      openPopover(dragging, sc.x, sc.y, [dragging], forcedOriginal);
+    }
     dragging = null;
   }
   panning = false; panStart = null; mapCanvas.style.cursor = editMode ? "default" : "grab";
