@@ -288,7 +288,7 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
     <div class="edit-btns">
       <button class="edit-btn-map start" id="btn-start-edit" onclick="startEditMode()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        위치 수정
+        수정
       </button>
       <button class="edit-btn-map save" id="btn-save-edit" onclick="saveAllEdits()" style="display:none;">전체 저장</button>
       <button class="edit-btn-map cancel" id="btn-cancel-edit" onclick="cancelEditMode()" style="display:none;">취소</button>
@@ -414,7 +414,8 @@ const neutral    = "#9ca3af";
 // 필터 정의 - 디폴트: 구성원 배정
 const FILTERS = [
   { key:"members", label:"구성원 배정", options:["배정","미배정"], colorMap: null,
-    getVal: w => w.members > 0 ? "배정" : "미배정" },
+    getVal: w => w.members > 0 ? "배정" : "미배정",
+    getLabel: w => w.members > 0 ? `${w.members}명` : "미배정" },
   { key:"accuracy", label:"위치 정확도", options:["관리자 검증","건물 수준","부정확"], colorMap: accColors },
   { key:"auth",     label:"출퇴근 인증 방법", options:["GPS","QR+GPS"], colorMap: authColors },
   { key:"do",       label:"도", options:["서울","경기도","인천"] },
@@ -731,12 +732,13 @@ function renderPins() {
       // 필터 라벨
       if (fDef) {
         const val = fDef.getVal ? fDef.getVal(w) : w[fDef.key];
+        const labelText = fDef.getLabel ? fDef.getLabel(w) : val;
         if (val !== undefined && val !== null) {
           const col2 = fDef.colorMap ? (fDef.colorMap[val] || "#1b2135") : "#1b2135";
-          const tw = String(val).length * 6.5 + 14;
+          const tw = String(labelText).length * 6.5 + 14;
           const labelG = ns("g"); labelG.setAttribute("transform",`translate(${cl.x},${cl.y - 22})`); labelG.style.pointerEvents = "none";
           const rect = ns("rect"); rect.setAttribute("x",-tw/2); rect.setAttribute("y","-12"); rect.setAttribute("width",tw); rect.setAttribute("height","16"); rect.setAttribute("rx","4"); rect.setAttribute("fill",col2);
-          const textEl = ns("text"); textEl.setAttribute("x","0"); textEl.setAttribute("y","0"); textEl.setAttribute("text-anchor","middle"); textEl.setAttribute("font-size","9.5"); textEl.setAttribute("fill","#fff"); textEl.setAttribute("font-family","sans-serif"); textEl.setAttribute("font-weight","500"); textEl.textContent = val;
+          const textEl = ns("text"); textEl.setAttribute("x","0"); textEl.setAttribute("y","0"); textEl.setAttribute("text-anchor","middle"); textEl.setAttribute("font-size","9.5"); textEl.setAttribute("fill","#fff"); textEl.setAttribute("font-family","sans-serif"); textEl.setAttribute("font-weight","500"); textEl.textContent = labelText;
           labelG.appendChild(rect); labelG.appendChild(textEl); lLayer.appendChild(labelG);
         }
       }
