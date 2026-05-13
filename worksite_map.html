@@ -84,12 +84,12 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .map-title { background: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 600; color: #1a1a1a; pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,0.12); white-space: nowrap; }
 
 /* 필터 칩 바 */
-.filter-bar { position: absolute; top: 12px; left: 192px; right: 16px; z-index: 200; display: flex; align-items: center; gap: 6px; overflow: visible; pointer-events: all; flex-wrap: nowrap; }
+.filter-bar { position: absolute; top: 12px; left: 192px; right: 16px; z-index: 200; display: flex; align-items: center; gap: 6px; overflow-x: auto; overflow-y: visible; pointer-events: all; flex-wrap: nowrap; padding-bottom: 4px; scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.2) transparent; }
 .filter-chip { display: flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #374151; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.1s; flex-shrink: 0; }
 .filter-chip:hover { background: #f9fafb; }
 .filter-chip.active { background: #1b2135; border-color: #1b2135; color: #fff; }
-.chip-wrap { position: relative; }
-.chip-dropdown { position: absolute; top: calc(100% + 8px); left: 0; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 0; min-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 300; display: none; }
+.chip-wrap { position: relative; flex-shrink: 0; }
+.chip-dropdown { position: fixed; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 0; min-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 300; display: none; }
 .chip-dropdown.open { display: block; }
 .dd-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; font-size: 13px; color: #374151; cursor: pointer; transition: background 0.1s; gap: 8px; }
 .dd-item:hover { background: #f9fafb; }
@@ -603,7 +603,14 @@ function toggleDropdown(key) {
   if (isSameChip && !wasOpen) {
     setTimeout(() => {
       const el = document.getElementById("dd-" + key);
-      if (el) el.classList.add("open");
+      if (!el) return;
+      const chip = el.previousSibling;
+      if (chip) {
+        const rect = chip.getBoundingClientRect();
+        el.style.top  = (rect.bottom + 6) + "px";
+        el.style.left = Math.min(rect.left, window.innerWidth - 224) + "px";
+      }
+      el.classList.add("open");
     }, 0);
   }
 }
