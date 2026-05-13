@@ -789,12 +789,19 @@ function savePopover(w) {
   if (!latOk || !lngOk || !rOk) return;
 
   const doSave = () => {
-    w.lat    = parseFloat(latVal);
-    w.lng    = parseFloat(lngVal);
+    const newLat = parseFloat(latVal);
+    const newLng = parseFloat(lngVal);
+    const latChanged = newLat !== w.lat;
+    const lngChanged = newLng !== w.lng;
+    w.lat    = newLat;
+    w.lng    = newLng;
     w.radius = rVal;
     w.auth   = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
-    w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
-    w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
+    // 위경도가 실제로 변경된 경우에만 SVG 좌표 재계산
+    if (latChanged || lngChanged) {
+      w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
+      w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
+    }
     // 다음 근무지 있으면 페이지 유지, 없으면 닫기
     if (popoverItems.length > 1 && popoverPage < popoverItems.length - 1) {
       popoverPage++;
@@ -916,11 +923,36 @@ function renderPins() {
               const dist = Math.sqrt((vp.x-w.x)**2 + (vp.y-w.y)**2);
               w.radius = Math.round(dist * 5);
               renderPins();
+              // 팝오버 열려있으면 필드 실시간 반영
+              const pop = document.getElementById("edit-popover");
+              if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
+                const outOfRange = w.radius < 40 || w.radius > 10000;
+                const rInput = document.getElementById("ep-radius-input");
+                rInput.value = w.radius;
+                rInput.classList.toggle("error", outOfRange);
+                document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
+                checkPopoverChanged();
+              }
             };
-            const onUp = () => {
-              if (w.radius < 40 || w.radius > 10000) {
-                w.radius = Math.max(40, Math.min(10000, w.radius));
-                showToast("40~10,000 범위에서 수정할 수 있어요.");
+            const onUp = (upEv) => {
+              const outOfRange = w.radius < 40 || w.radius > 10000;
+              // 팝오버가 열려있으면 필드 업데이트, 없으면 새로 열기
+              const pop = document.getElementById("edit-popover");
+              const sc = toScreen(w.x, w.y);
+              if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
+                const rInput = document.getElementById("ep-radius-input");
+                rInput.value = w.radius;
+                rInput.classList.toggle("error", outOfRange);
+                document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
+                checkPopoverChanged();
+              } else {
+                openPopover(w, sc.x, sc.y, [w]);
+                if (outOfRange) {
+                  setTimeout(() => {
+                    document.getElementById("ep-radius-input").classList.add("error");
+                    document.getElementById("ep-radius-error").classList.add("show");
+                  }, 0);
+                }
               }
               document.removeEventListener("mousemove", onMove);
               document.removeEventListener("mouseup", onUp);
