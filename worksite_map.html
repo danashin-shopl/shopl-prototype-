@@ -487,11 +487,12 @@ const worksites = [
   { id:12, name:"성북 센터",   code:"SEOSB2026CNT12",    addr:"서울 성북구 아리랑로 145",           x:665, y:105, auth:"QR+GPS", accuracy:"건물 수준",   region:"서울", grade:"B", channel:"직영",      do:"서울", city:"성북구",   zone:"동북권", dist:"직영유통사", radius:120, members:2956, lat:37.5894, lng:127.0167, addSingle:"옵션 B", addMulti:["옵션 1","옵션 3","옵션 4"], addText:null, addPhoto:3, addDoc:2 },
 ];
 
-const accColors  = { "관리자 검증":"#1D9E75", "건물 수준":"#378ADD", "부정확":"#E24B4A" };
+const accColors  = { "관리자 검증":"#378ADD", "건물 수준":"#1D9E75", "부정확":"#E24B4A" };
 const authColors = { "GPS":"#1D9E75", "QR+GPS":"#378ADD" };
 const accDpClass = { "관리자 검증":"ip-v", "건물 수준":"ip-b", "부정확":"ip-i" };
 const accBadge   = { "관리자 검증":"acc-v", "건물 수준":"acc-b", "부정확":"acc-i" };
 const neutral    = "#9ca3af";
+const defaultPinColor = "#1b2135"; // 색상 미지정 필터의 디폴트 pin/라벨 색
 
 // 필터 정의 - 디폴트: 구성원 배정
 const FILTERS = [
@@ -508,9 +509,11 @@ const FILTERS = [
   { key:"channel",  label:"채널", options:["직영","대리점","프랜차이즈"] },
   // 추가 정보 필터
   { key:"addSingle", label:"추가 정보 - 단일 선택", options:["옵션 A","옵션 B","옵션 C","미등록"],
+    colorMap: {"옵션 A":"#2563eb","옵션 B":"#2563eb","옵션 C":"#2563eb","미등록":"#9ca3af"},
     getVal: w => w.addSingle || "미등록",
     getLabel: w => w.addSingle || "미등록" },
   { key:"addMulti",  label:"추가 정보 - 다중 선택", options:["옵션 1","옵션 2","옵션 3","옵션 4","미등록"],
+    colorMap: {"옵션 1":"#2563eb","옵션 2":"#2563eb","옵션 3":"#2563eb","옵션 4":"#2563eb","미등록":"#9ca3af"},
     getVal: w => w.addMulti && w.addMulti.length > 0 ? w.addMulti[0] : "미등록",
     getLabel: w => {
       if (!w.addMulti || w.addMulti.length === 0) return "미등록";
@@ -522,17 +525,17 @@ const FILTERS = [
       return w.addMulti && w.addMulti.includes(val);
     }
   },
-  { key:"addText",   label:"추가 정보 - 직접 입력", options:["등록","미등록"],
+  { key:"addText",   label:"추가 정보 - 직접 입력", options:["등록","미등록"], colorMap:{"등록":"#2563eb","미등록":"#9ca3af"},
     getVal: w => w.addText ? "등록" : "미등록",
     getLabel: w => {
       if (!w.addText) return "미등록";
       return w.addText.length > 20 ? w.addText.slice(0,20) + "…" : w.addText;
     }
   },
-  { key:"addPhoto",  label:"추가 정보 - 사진", options:["등록","미등록"],
+  { key:"addPhoto",  label:"추가 정보 - 사진", options:["등록","미등록"], colorMap:{"등록":"#2563eb","미등록":"#9ca3af"},
     getVal: w => w.addPhoto > 0 ? "등록" : "미등록",
     getLabel: w => w.addPhoto > 0 ? `등록(${w.addPhoto})` : "미등록" },
-  { key:"addDoc",    label:"추가 정보 - 문서", options:["등록","미등록"],
+  { key:"addDoc",    label:"추가 정보 - 문서", options:["등록","미등록"], colorMap:{"등록":"#2563eb","미등록":"#9ca3af"},
     getVal: w => w.addDoc > 0 ? "등록" : "미등록",
     getLabel: w => w.addDoc > 0 ? `등록(${w.addDoc})` : "미등록" },
 ];
@@ -1029,8 +1032,23 @@ function renderPins() {
       let col;
       if (activeFilter === "members") {
         col = w.members > 0 ? "#2563eb" : neutral;
-      } else {
+      } else if (activeFilter === "accuracy") {
+        col = accColors[w.accuracy] || neutral;
+      } else if (activeFilter === "auth") {
         col = authColors[w.auth] || neutral;
+      } else if (activeFilter === "addSingle" || activeFilter === "addMulti") {
+        const fVal = activeFilter === "addSingle"
+          ? (w.addSingle || "미등록")
+          : (w.addMulti && w.addMulti.length > 0 ? "등록" : "미등록");
+        col = fVal === "미등록" ? neutral : "#2563eb";
+      } else if (activeFilter === "addText") {
+        col = w.addText ? "#2563eb" : neutral;
+      } else if (activeFilter === "addPhoto") {
+        col = w.addPhoto > 0 ? "#2563eb" : neutral;
+      } else if (activeFilter === "addDoc") {
+        col = w.addDoc > 0 ? "#2563eb" : neutral;
+      } else {
+        col = defaultPinColor;
       }
       // 출퇴근 인증 방법 필터 시 반경 원
       if (activeFilter === "auth") {
@@ -1130,7 +1148,7 @@ function renderPins() {
         const val = fDef.getVal ? fDef.getVal(w) : w[fDef.key];
         const labelText = fDef.getLabel ? fDef.getLabel(w) : val;
         if (val !== undefined && val !== null) {
-          const col2 = fDef.colorMap ? (fDef.colorMap[val] || "#1b2135") : "#1b2135";
+          const col2 = fDef.colorMap ? (fDef.colorMap[val] || defaultPinColor) : col;
           const tw = String(labelText).length * 6.5 + 14;
           const labelG = ns("g"); labelG.setAttribute("transform",`translate(${cl.x},${cl.y - 22})`); labelG.style.pointerEvents = "none";
           const rect = ns("rect"); rect.setAttribute("x",-tw/2); rect.setAttribute("y","-12"); rect.setAttribute("width",tw); rect.setAttribute("height","16"); rect.setAttribute("rx","4"); rect.setAttribute("fill",col2);
