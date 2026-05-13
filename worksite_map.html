@@ -634,10 +634,10 @@ function exitEditMode() {
 let popoverItems = [], popoverPage = 0;
 let popoverOriginal = {}; // 변경 감지용 원본값 (팝오버 열릴 때의 스냅샷)
 
-function setAuthToggle(val) {
+function setAuthToggle(val, skipCheck) {
   document.getElementById("ep-auth-gps").classList.toggle("active", val === "GPS");
   document.getElementById("ep-auth-qr").classList.toggle("active",  val === "QR+GPS");
-  checkPopoverChanged();
+  if (!skipCheck) checkPopoverChanged();
 }
 
 function validateLatLng(val, isLat) {
@@ -696,16 +696,14 @@ function renderPopoverPage() {
   latInput.value = w.lat;
   lngInput.value = w.lng;
   document.getElementById("ep-radius-input").value = w.radius;
-  setAuthToggle(w.auth);
+  setAuthToggle(w.auth, true); // 초기화 시엔 변경 감지 스킵
 
   // 에러 초기화
   ["ep-lat-input","ep-lng-input","ep-radius-input"].forEach(id => document.getElementById(id).classList.remove("error"));
   ["ep-lat-error","ep-lng-error","ep-radius-error"].forEach(id => document.getElementById(id).classList.remove("show"));
 
-  // 저장 버튼 초기 비활성화
-  document.getElementById("ep-save-btn").disabled = true;
-  document.getElementById("ep-save-btn").style.opacity = "0.45";
-  document.getElementById("ep-save-btn").style.cursor = "not-allowed";
+  // 저장 버튼 상태: 변경 여부에 따라 결정
+  checkPopoverChanged();
 
   // 위도 blur
   latInput.onblur = () => {
