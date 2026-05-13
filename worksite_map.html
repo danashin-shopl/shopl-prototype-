@@ -180,6 +180,19 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .ep-toggle-btn.active { background: #1b2135; color: #fff; }
 .ep-divider { width: 1px; background: #d1d5db; flex-shrink: 0; }
 
+/* 컨펌 모달 */
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; display: none; align-items: center; justify-content: center; }
+.confirm-overlay.open { display: flex; }
+.confirm-box { background: #fff; border-radius: 12px; padding: 24px 24px 20px; width: 360px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+.confirm-title { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 10px; line-height: 1.4; }
+.confirm-body { font-size: 13px; color: #6b7280; line-height: 1.6; margin-bottom: 20px; }
+.confirm-btns { display: flex; gap: 8px; justify-content: flex-end; }
+.confirm-btn { padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+.confirm-btn.cancel { background: #f3f4f6; color: #374151; }
+.confirm-btn.cancel:hover { background: #e5e7eb; }
+.confirm-btn.ok { background: #2563eb; color: #fff; }
+.confirm-btn.ok:hover { background: #1d4ed8; }
+
 /* alert 토스트 */
 .alert-toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 8px; padding: 10px 18px; font-size: 13px; z-index: 200; display: none; white-space: nowrap; }
 .alert-toast.show { display: block; }
@@ -312,6 +325,18 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 
   <!-- alert 토스트 -->
   <div class="alert-toast" id="alert-toast"></div>
+
+  <!-- 컨펌 모달 -->
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+      <div class="confirm-title" id="confirm-title"></div>
+      <div class="confirm-body" id="confirm-body"></div>
+      <div class="confirm-btns">
+        <button class="confirm-btn cancel" onclick="closeConfirm()">취소</button>
+        <button class="confirm-btn ok" id="confirm-ok-btn">확인</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 지도 -->
   <div class="map-canvas" id="map-canvas">
@@ -673,6 +698,16 @@ function closePopover() {
   editingWorksite = null;
 }
 
+function showConfirm(title, body, onOk) {
+  document.getElementById("confirm-title").textContent = title;
+  document.getElementById("confirm-body").textContent  = body;
+  document.getElementById("confirm-ok-btn").onclick = () => { closeConfirm(); onOk(); };
+  document.getElementById("confirm-overlay").classList.add("open");
+}
+function closeConfirm() {
+  document.getElementById("confirm-overlay").classList.remove("open");
+}
+
 function savePopover(w) {
   const latVal = document.getElementById("ep-lat-input").value;
   const lngVal = document.getElementById("ep-lng-input").value;
@@ -690,15 +725,27 @@ function savePopover(w) {
 
   if (!latOk || !lngOk || !rOk) return;
 
-  w.lat    = parseFloat(latVal);
-  w.lng    = parseFloat(lngVal);
-  w.radius = rVal;
-  w.auth   = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
-  w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
-  w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
-  closePopover();
-  renderAll();
-  showToast("저장되었습니다.");
+  const doSave = () => {
+    w.lat    = parseFloat(latVal);
+    w.lng    = parseFloat(lngVal);
+    w.radius = rVal;
+    w.auth   = document.getElementById("ep-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
+    w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
+    w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
+    closePopover();
+    renderAll();
+    showToast("저장되었습니다.");
+  };
+
+  if (rVal < 100) {
+    showConfirm(
+      "허용 반경을 100m 이하로 설정하시겠습니까?",
+      "출근 허용 반경을 100m 이하로 설정하면 GPS의 오차로 인해 출퇴근 체크가 원활하지 않을 수 있습니다. 따라서 허용반경은 100m 이상으로 설정하여야 안정적인 출퇴근 체크가 가능합니다.",
+      doSave
+    );
+  } else {
+    doSave();
+  }
 }
 function showToast(msg) {
   const t = document.getElementById("alert-toast");
