@@ -1095,8 +1095,8 @@ function renderPins() {
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
               } else {
-                // 반경 변경 원본값: 드래그 시작 전 radius
-                const preSnapshot = { lat: w.lat, lng: w.lng, radius: startR, auth: w.auth };
+                // 반경 변경 원본값: 드래그 시작 전 radius (x,y는 변경 없으므로 그대로)
+                const preSnapshot = { lat: w.lat, lng: w.lng, radius: startR, auth: w.auth, _origX: w.x, _origY: w.y };
                 openPopover(w, sc.x, sc.y, [w], preSnapshot);
                 if (outOfRange) {
                   setTimeout(() => {
