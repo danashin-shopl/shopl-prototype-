@@ -110,6 +110,14 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .dd-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .dd-cnt { font-size: 11px; color: #9ca3af; font-weight: 400; }
 .dd-check { color: #2563eb; flex-shrink: 0; }
+.dd-item-check { display: flex; align-items: center; gap: 8px; padding: 7px 14px; font-size: 13px; color: #374151; cursor: pointer; transition: background 0.1s; }
+.dd-item-check:hover { background: #f9fafb; }
+.dd-checkbox { width: 15px; height: 15px; border: 1.5px solid #d1d5db; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; transition: all 0.1s; }
+.dd-checkbox.checked { background: #2563eb; border-color: #2563eb; }
+.dd-checkbox.checked::after { content: ''; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px, -1px); }
+.dd-apply-btn { margin: 6px 10px 4px; padding: 6px; width: calc(100% - 20px); background: #2563eb; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; }
+.dd-apply-btn:hover { background: #1d4ed8; }
+.dd-section-line { height: 1px; background: #f3f4f6; margin: 4px 0; }
 
 /* 수정 모드 바 */
 .edit-wrap { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); z-index: 51; display: none; flex-direction: column; align-items: center; gap: 6px; }
@@ -537,7 +545,10 @@ const FILTERS = [
 ];
 
 let activeFilter = "members";
-let selectedPinIds = new Set(); // 현재 패널에 표시 중인 근무지 ID
+let selectedPinIds = new Set();
+// filterValues: 단일={ key: "값" }, 다중={ key: Set(["값1","값2"]) }
+// 다중 선택: 옵션 3개 이상인 필터
+const MULTI_FILTERS = new Set(["accuracy","do","city","zone","grade","dist","channel","addSingle","addMulti"]);
 let filterValues = {};
 let currentVB    = { x:0, y:0, w:900, h:600 };
 let editMode     = false;
@@ -574,17 +585,40 @@ function getFilterVal(w, f) {
   return w[f.key];
 }
 
+function getActiveVals(key) {
+  const v = filterValues[key];
+  if (!v) return new Set();
+  if (v instanceof Set) return v;
+  return new Set([v]);
+}
+
+function chipLabel(f) {
+  const v = filterValues[f.key];
+  if (!v) return f.label;
+  if (v instanceof Set) {
+    if (v.size === 0) return f.label;
+    if (v.size === 1) return `${f.label}: ${[...v][0]}`;
+    return `${f.label} (${v.size})`;
+  }
+  return `${f.label}: ${v}`;
+}
+
 function renderFilterBar() {
   const bar = document.getElementById("filter-bar");
   const openKey = document.querySelector(".chip-dropdown.open")?.id?.replace("dd-","");
   bar.innerHTML = "";
+
   FILTERS.forEach(f => {
+    const isMulti = MULTI_FILTERS.has(f.key);
     const wrap = document.createElement("div");
     wrap.className = "chip-wrap";
-    const val = filterValues[f.key];
+
+    const hasVal = filterValues[f.key] && (
+      filterValues[f.key] instanceof Set ? filterValues[f.key].size > 0 : true
+    );
     const chip = document.createElement("button");
     chip.className = "filter-chip" + (activeFilter === f.key ? " active" : "");
-    chip.innerHTML = `${f.label}${val ? `: ${val}` : ""} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.6"><polyline points="6 9 12 15 18 9"/></svg>`;
+    chip.innerHTML = `${chipLabel(f)} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.6"><polyline points="6 9 12 15 18 9"/></svg>`;
     chip.onclick = e => { e.stopPropagation(); toggleDropdown(f.key); };
     wrap.appendChild(chip);
 
@@ -592,42 +626,116 @@ function renderFilterBar() {
     dd.className = "chip-dropdown" + (openKey === f.key ? " open" : "");
     dd.id = "dd-" + f.key;
 
-    // 전체 카운트
     const allCnt = worksites.length;
-    const allItem = document.createElement("div");
-    allItem.className = "dd-item" + (!val ? " selected" : "");
-    allItem.innerHTML = `<div class="dd-left"><span>전체</span><span class="dd-cnt">(${allCnt})</span></div>${!val?'<svg class="dd-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':""}`;
-    allItem.onclick = e => { e.stopPropagation(); setFilterValue(f.key, null); };
-    dd.appendChild(allItem);
 
-    f.options.forEach(opt => {
-      const cnt = worksites.filter(w => {
-        if (f.filterFn) return f.filterFn(w, opt);
-        return getFilterVal(w, f) === opt;
-      }).length;
-      const col = f.colorMap ? f.colorMap[opt] : null;
-      const item = document.createElement("div");
-      item.className = "dd-item" + (val === opt ? " selected" : "");
-      item.innerHTML = `<div class="dd-left">${col?`<span class="dd-dot" style="background:${col}"></span>`:""}<span>${opt}</span><span class="dd-cnt">(${cnt})</span></div>${val===opt?'<svg class="dd-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':""}`;
-      item.onclick = e => { e.stopPropagation(); setFilterValue(f.key, opt); };
-      dd.appendChild(item);
-    });
+    if (isMulti) {
+      // 다중 선택: 체크박스 형태
+      const activeVals = getActiveVals(f.key);
+
+      // 전체 체크박스
+      const allRow = document.createElement("div");
+      allRow.className = "dd-item-check";
+      const allChecked = activeVals.size === 0;
+      allRow.innerHTML = `<div class="dd-checkbox ${allChecked?"checked":""}"></div><span style="flex:1">전체</span><span class="dd-cnt">(${allCnt})</span>`;
+      allRow.onclick = e => { e.stopPropagation(); toggleMultiAll(f.key); };
+      dd.appendChild(allRow);
+
+      const line = document.createElement("div");
+      line.className = "dd-section-line";
+      dd.appendChild(line);
+
+      f.options.forEach(opt => {
+        const cnt = worksites.filter(w => {
+          if (f.filterFn) return f.filterFn(w, opt);
+          return getFilterVal(w, f) === opt;
+        }).length;
+        const col = f.colorMap ? f.colorMap[opt] : null;
+        const checked = activeVals.has(opt);
+        const item = document.createElement("div");
+        item.className = "dd-item-check";
+        item.innerHTML = `<div class="dd-checkbox ${checked?"checked":""}"></div>${col?`<span class="dd-dot" style="background:${col};width:7px;height:7px;border-radius:50%;flex-shrink:0;"></span>`:""}<span style="flex:1">${opt}</span><span class="dd-cnt">(${cnt})</span>`;
+        item.onclick = e => { e.stopPropagation(); toggleMultiVal(f.key, opt, f); };
+        dd.appendChild(item);
+      });
+
+    } else {
+      // 단일 선택: 기존 라디오 형태
+      const val = filterValues[f.key];
+      const allItem = document.createElement("div");
+      allItem.className = "dd-item" + (!val ? " selected" : "");
+      allItem.innerHTML = `<div class="dd-left"><span>전체</span><span class="dd-cnt">(${allCnt})</span></div>${!val?'<svg class="dd-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':""}`;
+      allItem.onclick = e => { e.stopPropagation(); setFilterValue(f.key, null); };
+      dd.appendChild(allItem);
+
+      f.options.forEach(opt => {
+        const cnt = worksites.filter(w => {
+          if (f.filterFn) return f.filterFn(w, opt);
+          return getFilterVal(w, f) === opt;
+        }).length;
+        const col = f.colorMap ? f.colorMap[opt] : null;
+        const item = document.createElement("div");
+        item.className = "dd-item" + (val === opt ? " selected" : "");
+        item.innerHTML = `<div class="dd-left">${col?`<span class="dd-dot" style="background:${col}"></span>`:""}<span>${opt}</span><span class="dd-cnt">(${cnt})</span></div>${val===opt?'<svg class="dd-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':""}`;
+        item.onclick = e => { e.stopPropagation(); setFilterValue(f.key, opt); };
+        dd.appendChild(item);
+      });
+    }
+
     wrap.appendChild(dd);
     bar.appendChild(wrap);
   });
   updateEditWrap();
 }
 
+function toggleMultiAll(key) {
+  filterValues[key] = new Set(); // 전체 = 선택 없음
+  renderFilterBar();
+  renderAll();
+}
+
+function toggleMultiVal(key, opt, fDef) {
+  if (!(filterValues[key] instanceof Set)) filterValues[key] = new Set();
+  const s = filterValues[key];
+  if (s.has(opt)) s.delete(opt);
+  else s.add(opt);
+  if (s.size === 0) filterValues[key] = new Set();
+  renderFilterBar();
+  renderAll();
+  // 드롭다운 유지 (다중이므로 닫지 않음)
+  setTimeout(() => {
+    const el = document.getElementById("dd-" + key);
+    if (el) {
+      const chip = el.previousSibling;
+      if (chip) {
+        const rect = chip.getBoundingClientRect();
+        el.style.top  = (rect.bottom + 6) + "px";
+        el.style.left = Math.min(rect.left, window.innerWidth - 224) + "px";
+      }
+      el.classList.add("open");
+    }
+  }, 0);
+}
+
 function toggleDropdown(key) {
   const dd = document.getElementById("dd-" + key);
   const wasOpen = dd && dd.classList.contains("open");
   const isSameChip = activeFilter === key;
-  // 모든 드롭다운 닫기
   document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
+  // 다른 필터로 전환 시: 단일 필터끼리는 기존 값 초기화, 다중은 유지
+  if (!isSameChip) {
+    const prevIsMulti = MULTI_FILTERS.has(activeFilter);
+    const nextIsMulti = MULTI_FILTERS.has(key);
+    if (!prevIsMulti && !nextIsMulti) {
+      // 단일→단일: 기존 값 초기화
+      filterValues = {};
+    } else if (prevIsMulti && !nextIsMulti) {
+      // 다중→단일: 다중 값 초기화
+      Object.keys(filterValues).forEach(k => { if (MULTI_FILTERS.has(k)) delete filterValues[k]; });
+    }
+  }
   activeFilter = key;
   renderFilterBar();
   renderAll();
-  // 같은 칩을 클릭했고 닫혀있던 경우에만 드롭다운 열기
   if (isSameChip && !wasOpen) {
     setTimeout(() => {
       const el = document.getElementById("dd-" + key);
@@ -651,6 +759,7 @@ renderFilterBar = function() {
 };
 
 function setFilterValue(key, val) {
+  // 단일 필터 선택 시 다른 모든 필터 초기화
   filterValues = {};
   if (val !== null) filterValues[key] = val;
   document.querySelectorAll(".chip-dropdown").forEach(d => d.classList.remove("open"));
@@ -992,12 +1101,22 @@ function renderPins() {
   const fDef = FILTERS.find(f => f.key === activeFilter);
   const visible = worksites.filter(w => {
     for (const [key, val] of Object.entries(filterValues)) {
+      if (!val || (val instanceof Set && val.size === 0)) continue;
       const fd = FILTERS.find(f => f.key === key);
-      if (fd && fd.filterFn) {
-        if (!fd.filterFn(w, val)) return false;
+      if (val instanceof Set) {
+        // 다중 선택: 하나라도 매칭되면 통과
+        const matched = [...val].some(v => {
+          if (fd && fd.filterFn) return fd.filterFn(w, v);
+          return (fd && fd.getVal ? fd.getVal(w) : w[key]) === v;
+        });
+        if (!matched) return false;
       } else {
-        const wVal = fd && fd.getVal ? fd.getVal(w) : w[key];
-        if (wVal !== val) return false;
+        if (fd && fd.filterFn) {
+          if (!fd.filterFn(w, val)) return false;
+        } else {
+          const wVal = fd && fd.getVal ? fd.getVal(w) : w[key];
+          if (wVal !== val) return false;
+        }
       }
     }
     return true;
@@ -1039,7 +1158,8 @@ function renderPins() {
       if (activeFilter === "members") {
         col = w.members > 0 ? "#2563eb" : neutral;
       } else if (activeFilter === "accuracy") {
-        col = accColors[w.accuracy] || neutral;
+        const activeVals = getActiveVals("accuracy");
+        col = activeVals.size === 0 ? (accColors[w.accuracy] || neutral) : (accColors[w.accuracy] || neutral);
       } else if (activeFilter === "auth") {
         col = authColors[w.auth] || neutral;
       } else if (activeFilter === "addSingle" || activeFilter === "addMulti") {
