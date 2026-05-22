@@ -970,6 +970,7 @@ function openPopover(w, screenX, screenY, items, preSnapshot) {
   pop.style.left = Math.min(left, canvas.width - 280) + "px";
   pop.style.top  = Math.max(10, Math.min(top, canvas.height - 360)) + "px";
   pop.classList.add("open");
+  renderPins();
   renderPopoverPage();
 }
 
@@ -989,11 +990,11 @@ function closePopover(revert) {
       w.x = (w.lng - 126.7) / (127.15 - 126.7) * 900;
       w.y = (37.62 - w.lat) / (37.62 - 37.25) * 600;
     }
-    renderAll();
   }
   document.getElementById("edit-popover").classList.remove("open");
   editingWorksite = null;
   popoverOriginal = {};
+  renderPins();
 }
 
 function showConfirm(title, body, onOk) {
@@ -1235,7 +1236,7 @@ function renderPins() {
         }
         g.appendChild(rc);
       }
-      const isSelected = selectedPinIds.has(w.id);
+      const isSelected = selectedPinIds.has(w.id) || (editMode && editingWorksite && editingWorksite.id === w.id);
       // 선택 상태: 외곽 링
       if (isSelected) {
         const ring = ns("circle"); ring.setAttribute("cx","0"); ring.setAttribute("cy","0"); ring.setAttribute("r","19");
