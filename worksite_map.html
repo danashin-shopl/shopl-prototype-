@@ -343,7 +343,7 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         수정
       </button>
-      <button class="edit-btn-map cancel" id="btn-cancel-edit" onclick="exitEditMode()" style="display:none;">수정 종료</button>
+      <button class="edit-btn-map cancel" id="btn-cancel-edit" onclick="tryExitEditMode()" style="display:none;">수정 종료</button>
     </div>
     <div class="edit-hint" id="edit-hint">pin 또는 출근 허용 반경 원을 드래그해서 정보를 수정하세요.</div>
   </div>
@@ -831,6 +831,20 @@ function exitEditMode() {
   document.getElementById("btn-cancel-edit").style.display = "none";
   document.getElementById("edit-hint").classList.remove("visible");
 }
+function tryExitEditMode() {
+  const popOpen   = document.getElementById("edit-popover").classList.contains("open");
+  const hasChanges = popOpen && !document.getElementById("ep-save-btn").disabled;
+  if (hasChanges) {
+    showConfirm(
+      "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
+      "",
+      () => { closePopover(true); exitEditMode(); }
+    );
+  } else {
+    if (popOpen) closePopover(true);
+    exitEditMode();
+  }
+}
 
 /* ── 팝오버 ── */
 let popoverItems = [], popoverPage = 0;
@@ -999,7 +1013,9 @@ function closePopover(revert) {
 
 function showConfirm(title, body, onOk) {
   document.getElementById("confirm-title").textContent = title;
-  document.getElementById("confirm-body").textContent  = body;
+  const bodyEl = document.getElementById("confirm-body");
+  bodyEl.textContent = body;
+  bodyEl.style.display = body ? "" : "none";
   document.getElementById("confirm-ok-btn").onclick = () => { closeConfirm(); onOk(); };
   document.getElementById("confirm-overlay").classList.add("open");
 }
