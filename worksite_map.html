@@ -216,6 +216,21 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 /* alert 토스트 */
 .alert-toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 8px; padding: 10px 18px; font-size: 13px; z-index: 200; display: none; white-space: nowrap; }
 .alert-toast.show { display: block; }
+
+/* 리스트 패널 */
+.list-panel { position: absolute; bottom: 24px; right: 24px; width: 320px; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 40; display: none; flex-direction: column; max-height: calc(100vh - 120px); overflow: hidden; }
+.list-panel.open { display: flex; }
+.lp-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #f3f4f6; flex-shrink: 0; }
+.lp-title { font-size: 13px; font-weight: 700; color: #374151; }
+.lp-body { overflow-y: auto; }
+.lp-item { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.1s; gap: 10px; }
+.lp-item:last-child { border-bottom: none; }
+.lp-item:hover { background: #f9fafb; }
+.lp-item-info { flex: 1; min-width: 0; }
+.lp-item-name { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+.lp-item-addr { font-size: 11px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ip-back { background: none; border: none; cursor: pointer; color: #6b7280; font-size: 12px; font-weight: 500; padding: 3px 6px; border-radius: 4px; display: flex; align-items: center; gap: 3px; flex-shrink: 0; white-space: nowrap; }
+.ip-back:hover { background: #f3f4f6; color: #374151; }
 </style>
 </head>
 <body>
@@ -442,10 +457,22 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
     </div>
   </div>
 
+  <!-- 리스트 패널 -->
+  <div class="list-panel" id="list-panel">
+    <div class="lp-header">
+      <span class="lp-title" id="lp-title">근무지</span>
+      <button class="ip-close" onclick="closeListPanel()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="lp-body" id="lp-body"></div>
+  </div>
+
   <!-- 정보 패널 -->
   <div class="info-panel" id="info-panel">
     <div class="ip-header">
-      <span class="ip-title" id="ip-title">근무지 정보</span>
+      <div style="display:flex;align-items:center;gap:4px;min-width:0;">
+        <button class="ip-back" id="ip-back" style="display:none;" onclick="backToList()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>목록</button>
+        <span class="ip-title" id="ip-title">근무지 정보</span>
+      </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="ip-paging" id="ip-paging" style="display:none;">
           <button class="ip-page-btn" id="ip-prev" onclick="changePage(-1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -557,6 +584,7 @@ let origPositions = {};
 let editingWorksite = null;
 let panning = false, panStart = null, panVBStart = null;
 let panelItems = [], panelPage = 0;
+let listPanelItems = [], fromList = false;
 const CLUSTER_DIST = 28;
 const MAX_ZOOM_W   = 240;
 
@@ -575,6 +603,7 @@ function openMapView() {
 function closeMapView() {
   document.getElementById("page-map").classList.remove("open");
   closeInfoPanel();
+  closeListPanel();
   closePopover();
   if (editMode) cancelEditMode();
 }
@@ -1174,7 +1203,7 @@ function renderPins() {
             const sc = toScreen(cl.x, cl.y);
             openPopover(sorted[0], sc.x, sc.y, sorted);
           } else {
-            openInfoPanel(sorted);
+            openListPanel(sorted);
           }
         }
       });
@@ -1359,17 +1388,62 @@ function showHoverTooltip(text, vx, vy, offsetY) {
 function hideHoverTooltip() { document.getElementById("hover-tooltip").style.display = "none"; }
 
 /* ── 정보 패널 ── */
-function openInfoPanel(items) {
-  panelItems = items; panelPage = 0;
+function openInfoPanel(items, startItem) {
+  panelItems = items;
+  panelPage = startItem ? Math.max(0, items.findIndex(i => i.id === startItem.id)) : 0;
   selectedPinIds = new Set(items.map(w => w.id));
+  if (!fromList) document.getElementById("list-panel").classList.remove("open");
   renderInfoPanel();
   renderPins();
   document.getElementById("info-panel").classList.add("open");
 }
 function closeInfoPanel() {
   document.getElementById("info-panel").classList.remove("open");
+  document.getElementById("ip-back").style.display = "none";
+  fromList = false;
   selectedPinIds = new Set();
   renderPins();
+}
+
+/* ── 리스트 패널 ── */
+function openListPanel(items) {
+  listPanelItems = items;
+  selectedPinIds = new Set(items.map(w => w.id));
+  document.getElementById("info-panel").classList.remove("open");
+  document.getElementById("lp-title").textContent = `근무지 ${items.length}개`;
+  const body = document.getElementById("lp-body");
+  body.innerHTML = "";
+  items.forEach(w => {
+    const item = document.createElement("div");
+    item.className = "lp-item";
+    item.innerHTML = `
+      <div class="lp-item-info">
+        <div class="lp-item-name">${w.name}</div>
+        <div class="lp-item-addr">${w.addr}</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+    item.onclick = () => openDetailFromList(w);
+    body.appendChild(item);
+  });
+  document.getElementById("list-panel").classList.add("open");
+  renderPins();
+}
+function closeListPanel() {
+  document.getElementById("list-panel").classList.remove("open");
+  selectedPinIds = new Set();
+  renderPins();
+}
+function openDetailFromList(w) {
+  fromList = true;
+  document.getElementById("list-panel").classList.remove("open");
+  document.getElementById("ip-back").style.display = "";
+  openInfoPanel(listPanelItems, w);
+}
+function backToList() {
+  fromList = false;
+  document.getElementById("ip-back").style.display = "none";
+  document.getElementById("info-panel").classList.remove("open");
+  openListPanel(listPanelItems);
 }
 function changePage(dir) { panelPage = Math.max(0, Math.min(panelItems.length-1, panelPage+dir)); renderInfoPanel(); }
 function renderInfoPanel() {
