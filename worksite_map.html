@@ -619,7 +619,13 @@ function renderFilterBar() {
     const chip = document.createElement("button");
     chip.className = "filter-chip" + (activeFilter === f.key ? " active" : "");
     chip.innerHTML = `${chipLabel(f)} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.6"><polyline points="6 9 12 15 18 9"/></svg>`;
-    chip.onclick = e => { e.stopPropagation(); toggleDropdown(f.key); };
+    if (editMode && f.key !== activeFilter) {
+      chip.style.opacity = "0.35";
+      chip.style.cursor = "not-allowed";
+      chip.onclick = e => e.stopPropagation();
+    } else {
+      chip.onclick = e => { e.stopPropagation(); toggleDropdown(f.key); };
+    }
     wrap.appendChild(chip);
 
     const dd = document.createElement("div");
@@ -717,21 +723,8 @@ function toggleMultiVal(key, opt, fDef) {
 }
 
 function toggleDropdown(key) {
-  // 수정 모드에서 현재 필터(출퇴근 인증 방법) 외 chip 클릭 시 수정 종료 확인
-  if (editMode && key !== activeFilter) {
-    const popOpen = document.getElementById("edit-popover").classList.contains("open");
-    const hasChanges = popOpen && !document.getElementById("ep-save-btn").disabled;
-    if (hasChanges) {
-      showConfirm(
-        "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
-        "",
-        () => { closePopover(true); exitEditMode(); toggleDropdown(key); }
-      );
-      return;
-    }
-    if (popOpen) closePopover(true);
-    exitEditMode();
-  }
+  // 수정 모드에서 다른 chip 클릭 차단 (안전장치)
+  if (editMode && key !== activeFilter) return;
   const dd = document.getElementById("dd-" + key);
   const wasOpen = dd && dd.classList.contains("open");
   const isSameChip = activeFilter === key;
@@ -825,6 +818,7 @@ function startEditMode() {
   document.getElementById("btn-cancel-edit").style.display = "";
   document.getElementById("edit-hint").classList.add("visible");
   closeInfoPanel();
+  renderFilterBar();
   renderAll();
 }
 function saveAllEdits() {
@@ -845,6 +839,7 @@ function exitEditMode() {
   document.getElementById("btn-start-edit").style.display = "";
   document.getElementById("btn-cancel-edit").style.display = "none";
   document.getElementById("edit-hint").classList.remove("visible");
+  renderFilterBar();
 }
 function tryExitEditMode() {
   const popOpen   = document.getElementById("edit-popover").classList.contains("open");
