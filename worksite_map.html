@@ -717,6 +717,21 @@ function toggleMultiVal(key, opt, fDef) {
 }
 
 function toggleDropdown(key) {
+  // 수정 모드에서 현재 필터(출퇴근 인증 방법) 외 chip 클릭 시 수정 종료 확인
+  if (editMode && key !== activeFilter) {
+    const popOpen = document.getElementById("edit-popover").classList.contains("open");
+    const hasChanges = popOpen && !document.getElementById("ep-save-btn").disabled;
+    if (hasChanges) {
+      showConfirm(
+        "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
+        "",
+        () => { closePopover(true); exitEditMode(); toggleDropdown(key); }
+      );
+      return;
+    }
+    if (popOpen) closePopover(true);
+    exitEditMode();
+  }
   const dd = document.getElementById("dd-" + key);
   const wasOpen = dd && dd.classList.contains("open");
   const isSameChip = activeFilter === key;
@@ -1202,14 +1217,12 @@ function renderPins() {
           rc.style.cursor = "ew-resize";
           rc.addEventListener("mousedown", e => {
             e.stopPropagation();
-            const startVP = toViewBox(e.clientX, e.clientY);
             const startR = w.radius;
-            const onMove = ev => {
-              const vp = toViewBox(ev.clientX, ev.clientY);
-              const dist = Math.sqrt((vp.x-w.x)**2 + (vp.y-w.y)**2);
-              w.radius = Math.round(dist * 5);
+            let lastClientX = e.clientX, lastClientY = e.clientY;
+            let autoPanRAF = null;
+
+            function updateRadiusDisplay() {
               renderPins();
-              // 팝오버 열려있으면 필드 실시간 반영
               const pop = document.getElementById("edit-popover");
               if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
                 const outOfRange = w.radius < 40 || w.radius > 10000;
@@ -1219,10 +1232,43 @@ function renderPins() {
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
               }
+            }
+            function calcRadius() {
+              const vp = toViewBox(lastClientX, lastClientY);
+              const dist = Math.sqrt((vp.x - w.x) ** 2 + (vp.y - w.y) ** 2);
+              w.radius = Math.round(dist * 5);
+              updateRadiusDisplay();
+            }
+            function stopAutoPan() {
+              if (autoPanRAF) { cancelAnimationFrame(autoPanRAF); autoPanRAF = null; }
+            }
+            function startAutoPan(dx, dy) {
+              stopAutoPan();
+              function step() {
+                const speed = Math.max(currentVB.w * 0.006, 2);
+                currentVB.x += dx * speed;
+                currentVB.y += dy * speed;
+                document.getElementById("map-svg").setAttribute("viewBox", `${currentVB.x} ${currentVB.y} ${currentVB.w} ${currentVB.h}`);
+                calcRadius();
+                autoPanRAF = requestAnimationFrame(step);
+              }
+              autoPanRAF = requestAnimationFrame(step);
+            }
+
+            const onMove = ev => {
+              lastClientX = ev.clientX;
+              lastClientY = ev.clientY;
+              calcRadius();
+              const canvas = document.getElementById("map-canvas").getBoundingClientRect();
+              const EDGE = 60;
+              const dx = ev.clientX < canvas.left + EDGE ? -1 : ev.clientX > canvas.right - EDGE ? 1 : 0;
+              const dy = ev.clientY < canvas.top + EDGE ? -1 : ev.clientY > canvas.bottom - EDGE ? 1 : 0;
+              if (dx !== 0 || dy !== 0) startAutoPan(dx, dy);
+              else stopAutoPan();
             };
-            const onUp = (upEv) => {
+            const onUp = () => {
+              stopAutoPan();
               const outOfRange = w.radius < 40 || w.radius > 10000;
-              // 팝오버가 열려있으면 필드 업데이트, 없으면 새로 열기
               const pop = document.getElementById("edit-popover");
               const sc = toScreen(w.x, w.y);
               if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
@@ -1232,7 +1278,6 @@ function renderPins() {
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
               } else {
-                // 반경 변경 원본값: 드래그 시작 전 radius (x,y는 변경 없으므로 그대로)
                 const preSnapshot = { lat: w.lat, lng: w.lng, radius: startR, auth: w.auth, _origX: w.x, _origY: w.y };
                 openPopover(w, sc.x, sc.y, [w], preSnapshot);
                 if (outOfRange) {
