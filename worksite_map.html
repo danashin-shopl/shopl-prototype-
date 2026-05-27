@@ -1199,12 +1199,7 @@ function renderPins() {
           renderPins();
         } else {
           const sorted = [...cl.items].sort((a,b) => a.name.localeCompare(b.name, 'ko'));
-          if (editMode) {
-            const sc = toScreen(cl.x, cl.y);
-            openPopover(sorted[0], sc.x, sc.y, sorted);
-          } else {
-            openListPanel(sorted);
-          }
+          openListPanel(sorted);
         }
       });
 
@@ -1434,10 +1429,16 @@ function closeListPanel() {
   renderPins();
 }
 function openDetailFromList(w) {
-  fromList = true;
   document.getElementById("list-panel").classList.remove("open");
-  document.getElementById("ip-back").style.display = "";
-  openInfoPanel(listPanelItems, w);
+  if (editMode) {
+    selectedPinIds = new Set();
+    const sc = toScreen(w.x, w.y);
+    openPopover(w, sc.x, sc.y, listPanelItems);
+  } else {
+    fromList = true;
+    document.getElementById("ip-back").style.display = "";
+    openInfoPanel(listPanelItems, w);
+  }
 }
 function backToList() {
   fromList = false;
