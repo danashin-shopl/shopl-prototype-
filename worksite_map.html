@@ -217,6 +217,39 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .alert-toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; border-radius: 8px; padding: 10px 18px; font-size: 13px; z-index: 200; display: none; white-space: nowrap; }
 .alert-toast.show { display: block; }
 
+/* 통계 카드 */
+.stats-row { display:flex; gap:12px; margin-bottom:14px; }
+.stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:14px 18px; }
+.stat-card-hd { display:flex; align-items:center; gap:7px; margin-bottom:10px; flex-wrap:wrap; }
+.stat-card-title { font-size:13px; font-weight:600; color:#374151; }
+.map-chip { display:inline-flex; align-items:center; gap:4px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:20px; padding:2px 9px; font-size:11px; color:#2563eb; font-weight:500; cursor:pointer; }
+.map-chip:hover { background:#dbeafe; }
+.stat-big-num { font-size:26px; font-weight:700; color:#1a1a1a; }
+.member-wrap { display:flex; align-items:center; gap:18px; }
+.donut-box { position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.donut-pct { position:absolute; font-size:12px; font-weight:700; color:#1a1a1a; }
+.member-info { flex:1; }
+.member-total-txt { font-size:11px; color:#9ca3af; margin-bottom:8px; }
+.mrow { display:flex; align-items:center; gap:5px; margin-bottom:5px; }
+.mdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.mlabel { font-size:12px; color:#6b7280; flex:1; }
+.mval { font-size:12px; font-weight:600; color:#1a1a1a; }
+.mpct { font-size:11px; color:#9ca3af; min-width:48px; text-align:right; }
+/* 정보별 통계 */
+.info-stats-wrap { margin-bottom:16px; }
+.info-stats-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.mini-cards { display:flex; gap:10px; }
+.mc { flex:1; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 13px; min-width:0; }
+.mc-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.mc-title { font-size:12px; font-weight:600; color:#374151; }
+.mc-arr { background:none; border:none; cursor:pointer; padding:0; display:flex; }
+.mc-bar { display:flex; height:6px; border-radius:3px; overflow:hidden; margin-bottom:9px; }
+.mc-row { display:flex; align-items:center; gap:4px; margin-bottom:4px; }
+.mc-dot { width:7px; height:7px; border-radius:1.5px; flex-shrink:0; }
+.mc-lbl { font-size:11px; color:#374151; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mc-cnt { font-size:11px; font-weight:600; color:#1a1a1a; min-width:20px; text-align:right; }
+.mc-pct { font-size:11px; color:#9ca3af; min-width:38px; text-align:right; }
+
 /* 리스트 패널 */
 .list-panel { position: absolute; bottom: 24px; right: 24px; width: 320px; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 40; display: none; flex-direction: column; max-height: calc(100vh - 120px); overflow: hidden; }
 .list-panel.open { display: flex; }
@@ -295,16 +328,64 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
           </div>
         </div>
       </div>
-      <div class="view-bar">
-        <button class="btn-default" onclick="openMapView()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-          지도로 보기
-        </button>
-      </div>
       <div class="list-inner">
-        <div style="display:flex;align-items:center;margin-bottom:12px;">
-          <div class="list-count">전체 <strong>12</strong>&nbsp; 정렬&nbsp;<select class="sort-sel"><option>근무지명</option></select></div>
-          <div class="list-actions">
+        <!-- 상단 통계 카드 -->
+        <div class="stats-row">
+          <div class="stat-card" style="flex:1;">
+            <div class="stat-card-hd">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              <span class="stat-card-title">근무지</span>
+              <button class="map-chip" onclick="openMapView()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                지도로 보기
+              </button>
+            </div>
+            <div class="stat-big-num" id="stat-total">—</div>
+          </div>
+          <div class="stat-card" style="flex:2.5;">
+            <div class="stat-card-hd">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="stat-card-title">구성원 배정</span>
+            </div>
+            <div class="member-wrap">
+              <div class="donut-box">
+                <svg width="76" height="76" viewBox="0 0 76 76">
+                  <circle cx="38" cy="38" r="28" fill="none" stroke="#e5e7eb" stroke-width="9"/>
+                  <circle cx="38" cy="38" r="28" fill="none" stroke="#2563eb" stroke-width="9"
+                    id="donut-arc" stroke-dasharray="0 175.9" transform="rotate(-90 38 38)" style="transition:stroke-dasharray 0.4s;"/>
+                </svg>
+                <div class="donut-pct" id="donut-pct">—</div>
+              </div>
+              <div class="member-info">
+                <div class="member-total-txt" id="member-total-txt">— / —</div>
+                <div class="mrow"><span class="mdot" style="background:#2563eb;"></span><span class="mlabel">배정</span><span class="mval" id="m-assigned">—</span><span class="mpct" id="m-assigned-pct"></span></div>
+                <div class="mrow"><span class="mdot" style="background:#9ca3af;"></span><span class="mlabel">미배정</span><span class="mval" id="m-unassigned">—</span><span class="mpct" id="m-unassigned-pct"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 정보별 통계 -->
+        <div class="info-stats-wrap">
+          <div class="info-stats-hd">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span style="font-size:13px;font-weight:600;color:#374151;">정보별 통계</span>
+            </div>
+            <button class="btn-default" style="font-size:12px;padding:4px 10px;">조회 정보 선택</button>
+          </div>
+          <div class="mini-cards" id="mini-cards"></div>
+        </div>
+
+        <!-- 테이블 컨트롤 -->
+        <div style="display:flex;align-items:center;margin-bottom:10px;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:#374151;">전체 <strong id="table-count">—</strong></span>
+          <span style="font-size:12px;color:#9ca3af;">정렬</span>
+          <select class="sort-sel"><option>근무지명</option><option>근무지 코드</option></select>
+          <button class="btn-default" style="padding:5px 8px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></button>
+          <button class="btn-default" style="padding:5px 8px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+          <button class="btn-default" style="font-size:12px;padding:5px 10px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>보기 설정</button>
+          <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
             <input class="search-box" placeholder="검색" type="text">
             <button class="btn-default" style="font-size:12px;padding:5px 12px;">QR 다운로드</button>
             <button class="btn-default" style="font-size:12px;padding:5px 12px;">다운로드</button>
@@ -312,7 +393,16 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
         </div>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th style="width:36px;"><input type="checkbox"></th><th>No.</th><th>근무지명</th><th>근무지 코드</th><th>주소</th><th>위치 정확도</th><th>배정된 구성원</th><th>출퇴근 인증</th></tr></thead>
+            <thead><tr>
+              <th style="width:36px;"><input type="checkbox"></th>
+              <th>No.</th>
+              <th>근무지명</th>
+              <th>근무지 코드</th>
+              <th>주소</th>
+              <th>위치 정확도 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;opacity:0.5;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></th>
+              <th>배정된 구성원</th>
+              <th>출퇴근 인증</th>
+            </tr></thead>
             <tbody id="list-table-body"></tbody>
           </table>
         </div>
@@ -1536,7 +1626,72 @@ function renderTable() {
 }
 
 function renderAll() { renderPins(); }
+function renderStats() {
+  const total = worksites.length;
+  document.getElementById("stat-total").textContent = total.toLocaleString();
+  document.getElementById("table-count").textContent = total.toLocaleString();
+
+  // 구성원 배정 도넛
+  const assigned   = worksites.filter(w => w.members > 0).length;
+  const unassigned = total - assigned;
+  const pct = total > 0 ? assigned / total * 100 : 0;
+  const circ = 175.9;
+  const arc  = circ * pct / 100;
+  document.getElementById("donut-arc").setAttribute("stroke-dasharray", `${arc.toFixed(1)} ${(circ-arc).toFixed(1)}`);
+  document.getElementById("donut-pct").textContent       = pct.toFixed(1) + "%";
+  document.getElementById("member-total-txt").textContent = `${assigned.toLocaleString()} / ${total.toLocaleString()}`;
+  document.getElementById("m-assigned").textContent       = assigned.toLocaleString();
+  document.getElementById("m-assigned-pct").textContent   = (assigned/total*100).toFixed(1) + "%";
+  document.getElementById("m-unassigned").textContent     = unassigned.toLocaleString();
+  document.getElementById("m-unassigned-pct").textContent = (unassigned/total*100).toFixed(1) + "%";
+
+  // 정보별 통계 미니 카드
+  const statDefs = [
+    { title:"위치 정확도", items:[
+      { label:"관리자가 위치 검증", color:"#378ADD", count:worksites.filter(w=>w.accuracy==="관리자 검증").length },
+      { label:"건물 수준 정확도",   color:"#1D9E75", count:worksites.filter(w=>w.accuracy==="건물 수준").length },
+      { label:"부정확",            color:"#E24B4A", count:worksites.filter(w=>w.accuracy==="부정확").length },
+    ]},
+    { title:"출퇴근 위치 인증 방법", items:[
+      { label:"GPS",       color:"#1D9E75", count:worksites.filter(w=>w.auth==="GPS").length },
+      { label:"QR 코드+GPS", color:"#378ADD", count:worksites.filter(w=>w.auth==="QR+GPS").length },
+    ]},
+    { title:"도", items:[
+      { label:"서울",  color:"#2563eb", count:worksites.filter(w=>w.do==="서울").length },
+      { label:"경기도", color:"#7c3aed", count:worksites.filter(w=>w.do==="경기도").length },
+      { label:"인천",  color:"#0891b2", count:worksites.filter(w=>w.do==="인천").length },
+    ]},
+    { title:"추가 정보 (다중 선택)", items:[
+      { label:"미등록", color:"#9ca3af", count:worksites.filter(w=>!w.addMulti||w.addMulti.length===0).length },
+      { label:"옵션 1", color:"#2563eb", count:worksites.filter(w=>w.addMulti&&w.addMulti.includes("옵션 1")).length },
+      { label:"옵션 2", color:"#60a5fa", count:worksites.filter(w=>w.addMulti&&w.addMulti.includes("옵션 2")).length },
+      { label:"기타",  color:"#d1d5db", count:worksites.filter(w=>w.addMulti&&w.addMulti.includes("옵션 3")).length },
+    ]},
+  ];
+  const container = document.getElementById("mini-cards");
+  if (!container) return;
+  container.innerHTML = "";
+  statDefs.forEach(def => {
+    const card = document.createElement("div");
+    card.className = "mc";
+    const barHtml = def.items.filter(i=>i.count>0).map(i=>`<div style="flex:${i.count};background:${i.color};"></div>`).join("");
+    const rowsHtml = def.items.map(i=>{
+      const p = total>0 ? (i.count/total*100).toFixed(1) : "0.0";
+      return `<div class="mc-row"><span class="mc-dot" style="background:${i.color};"></span><span class="mc-lbl">${i.label}</span><span class="mc-cnt">${i.count}</span><span class="mc-pct">${p}%</span></div>`;
+    }).join("");
+    card.innerHTML = `
+      <div class="mc-hd">
+        <span class="mc-title">${def.title}</span>
+        <button class="mc-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+      <div class="mc-bar">${barHtml||'<div style="flex:1;background:#f3f4f6;"></div>'}</div>
+      ${rowsHtml}`;
+    container.appendChild(card);
+  });
+}
+
 renderTable();
+renderStats();
 </script>
 </body>
 </html>
