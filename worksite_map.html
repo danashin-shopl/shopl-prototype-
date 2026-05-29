@@ -1099,6 +1099,22 @@ function changePopoverPage(dir) {
 }
 
 function openPopover(w, screenX, screenY, items, preSnapshot) {
+  // 다른 근무지 팝오버가 열려있으면 변경값 원복 후 전환
+  const _pop = document.getElementById("edit-popover");
+  if (_pop.classList.contains("open") && editingWorksite && editingWorksite.id !== w.id && popoverOriginal) {
+    const prev = editingWorksite;
+    prev.lat    = popoverOriginal.lat;
+    prev.lng    = popoverOriginal.lng;
+    prev.radius = popoverOriginal.radius;
+    prev.auth   = popoverOriginal.auth;
+    if (popoverOriginal._origX !== undefined) {
+      prev.x = popoverOriginal._origX;
+      prev.y = popoverOriginal._origY;
+    } else {
+      prev.x = (prev.lng - 126.7) / (127.15 - 126.7) * 900;
+      prev.y = (37.62 - prev.lat) / (37.62 - 37.25) * 600;
+    }
+  }
   editingWorksite = w;
   popoverItems = items || [w];
   popoverPage  = popoverItems.findIndex(i => i.id === w.id);
