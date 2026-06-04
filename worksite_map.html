@@ -701,7 +701,8 @@ const FILTERS = [
     getVal: w => w.members > 0 ? "배정" : "미배정",
     getLabel: w => w.members > 0 ? `${w.members.toLocaleString()}명` : "미배정" },
   { key:"accuracy", label:"위치 정확도", options:["관리자 검증","건물 수준","부정확"], colorMap: accColors },
-  { key:"auth",     label:"출퇴근 인증 방법", options:["GPS","QR+GPS"], colorMap: authColors },
+  { key:"auth",     label:"출퇴근 인증 방법", options:["GPS","QR+GPS"], colorMap: authColors,
+    getLabel: w => `${w.auth} (허용 반경: ${w.radius}m)` },
   { key:"do",       label:"도", options:["서울","경기도","인천"] },
   { key:"city",     label:"도시", options:["강남구","종로구","마포구","중구","서대문구","용산구","성북구","수원시","성남시","남동구"] },
   { key:"zone",     label:"구역", options:["강남권","서북권","도심권","동북권","경기남부","인천권"] },
@@ -1432,13 +1433,19 @@ function renderPins() {
             function updateRadiusDisplay() {
               renderPins();
               const pop = document.getElementById("edit-popover");
+              const outOfRange = w.radius < 40 || w.radius > 10000;
               if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
-                const outOfRange = w.radius < 40 || w.radius > 10000;
                 const rInput = document.getElementById("ep-radius-input");
                 rInput.value = w.radius;
                 rInput.classList.toggle("error", outOfRange);
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
+              } else if (ldEditingWorksite && ldEditingWorksite.id === w.id) {
+                const rInput = document.getElementById("ld-radius-input");
+                rInput.value = w.radius;
+                rInput.classList.toggle("error", outOfRange);
+                document.getElementById("ld-radius-error").classList.toggle("show", outOfRange);
+                checkLdChanged();
               }
             }
             function calcRadius() {
@@ -1480,12 +1487,21 @@ function renderPins() {
               const pop = document.getElementById("edit-popover");
               const sc = toScreen(w.x, w.y);
               if (pop.classList.contains("open") && editingWorksite && editingWorksite.id === w.id) {
+                // floating 팝오버 업데이트
                 const rInput = document.getElementById("ep-radius-input");
                 rInput.value = w.radius;
                 rInput.classList.toggle("error", outOfRange);
                 document.getElementById("ep-radius-error").classList.toggle("show", outOfRange);
                 checkPopoverChanged();
+              } else if (ldEditingWorksite && ldEditingWorksite.id === w.id) {
+                // lp-edit-view 업데이트 (팝오버 열지 않음)
+                const rInput = document.getElementById("ld-radius-input");
+                rInput.value = w.radius;
+                rInput.classList.toggle("error", outOfRange);
+                document.getElementById("ld-radius-error").classList.toggle("show", outOfRange);
+                checkLdChanged();
               } else {
+                // 그 외: floating 팝오버 열기
                 const preSnapshot = { lat: w.lat, lng: w.lng, radius: startR, auth: w.auth, _origX: w.x, _origY: w.y };
                 openPopover(w, sc.x, sc.y, [w], preSnapshot);
                 if (outOfRange) {
@@ -1545,7 +1561,7 @@ function renderPins() {
         const labelText = fDef.getLabel ? fDef.getLabel(w) : val;
         if (val !== undefined && val !== null) {
           const col2 = fDef.colorMap ? (fDef.colorMap[val] || defaultPinColor) : col;
-          const tw = String(labelText).length * 6.5 + 14;
+          const tw = [...String(labelText)].reduce((s,c) => s + (c.charCodeAt(0) > 0x7F ? 10 : 6), 0) + 14;
           const labelG = ns("g"); labelG.setAttribute("transform",`translate(${cl.x},${cl.y - 22})`); labelG.style.pointerEvents = "none";
           const rect = ns("rect"); rect.setAttribute("x",-tw/2); rect.setAttribute("y","-12"); rect.setAttribute("width",tw); rect.setAttribute("height","16"); rect.setAttribute("rx","4"); rect.setAttribute("fill",col2);
           const textEl = ns("text"); textEl.setAttribute("x","0"); textEl.setAttribute("y","0"); textEl.setAttribute("text-anchor","middle"); textEl.setAttribute("font-size","9.5"); textEl.setAttribute("fill","#fff"); textEl.setAttribute("font-family","sans-serif"); textEl.setAttribute("font-weight","500"); textEl.textContent = labelText;
