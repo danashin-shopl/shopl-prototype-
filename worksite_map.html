@@ -603,12 +603,12 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
         <div class="lp-edit-view" id="lp-edit-view" style="display:none;">
           <div class="ep-input-row">
             <div class="ep-input-label">위도</div>
-            <input class="ep-input" type="text" id="ld-lat-input" placeholder="37.0000">
+            <input class="ep-input" type="text" id="ld-lat-input" placeholder="37.0000" oninput="checkLdChanged()">
             <div class="ep-input-error" id="ld-lat-error">올바른 위도 값을 입력하세요.</div>
           </div>
           <div class="ep-input-row">
             <div class="ep-input-label">경도</div>
-            <input class="ep-input" type="text" id="ld-lng-input" placeholder="127.0000">
+            <input class="ep-input" type="text" id="ld-lng-input" placeholder="127.0000" oninput="checkLdChanged()">
             <div class="ep-input-error" id="ld-lng-error">올바른 경도 값을 입력하세요.</div>
           </div>
           <div class="ep-toggle-row">
@@ -622,13 +622,13 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
           <div class="ep-input-row">
             <div class="ep-input-label">출근 허용 반경</div>
             <div style="display:flex;align-items:center;gap:6px;">
-              <input class="ep-input" type="text" inputmode="numeric" id="ld-radius-input" style="flex:1;">
+              <input class="ep-input" type="text" inputmode="numeric" id="ld-radius-input" style="flex:1;" oninput="checkLdChanged()">
               <span style="font-size:12px;color:#6b7280;flex-shrink:0;">m</span>
             </div>
             <div class="ep-input-error" id="ld-radius-error">40~10,000 범위에서 수정할 수 있어요.</div>
           </div>
           <div class="ep-btns">
-            <button class="ep-btn save" onclick="saveLdEdit()">저장</button>
+            <button class="ep-btn save" id="ld-save-btn" onclick="saveLdEdit()">저장</button>
             <button class="ep-btn cancel" onclick="collapseDetail()">취소</button>
           </div>
         </div>
@@ -1744,15 +1744,40 @@ function renderListEditView(w) {
   document.getElementById("ld-lat-input").value    = w.lat.toFixed(4);
   document.getElementById("ld-lng-input").value    = w.lng.toFixed(4);
   document.getElementById("ld-radius-input").value = w.radius;
-  setLdAuthToggle(w.auth);
+  // 토글은 checkLdChanged 호출 없이 UI만 세팅 (초기화 시 changed=false이므로)
+  document.getElementById("ld-auth-gps").classList.toggle("active", w.auth === "GPS");
+  document.getElementById("ld-auth-qr").classList.toggle("active",  w.auth === "QR+GPS");
   ["ld-lat-error","ld-lng-error","ld-radius-error"].forEach(id =>
     document.getElementById(id).classList.remove("show"));
   ["ld-lat-input","ld-lng-input","ld-radius-input"].forEach(id =>
     document.getElementById(id).classList.remove("error"));
+  // 초기 상태: 변경 없음 → 저장 버튼 비활성
+  const btn = document.getElementById("ld-save-btn");
+  btn.disabled = true; btn.style.opacity = "0.45"; btn.style.cursor = "not-allowed";
 }
 function setLdAuthToggle(val) {
   document.getElementById("ld-auth-gps").classList.toggle("active", val === "GPS");
   document.getElementById("ld-auth-qr").classList.toggle("active", val === "QR+GPS");
+  checkLdChanged();
+}
+function checkLdChanged() {
+  if (!ldEditOriginal) return;
+  const latStr = document.getElementById("ld-lat-input").value.trim();
+  const lngStr = document.getElementById("ld-lng-input").value.trim();
+  const rStr   = document.getElementById("ld-radius-input").value.trim();
+  const btn    = document.getElementById("ld-save-btn");
+  if (!btn) return;
+  if (!latStr || !lngStr || !rStr) {
+    btn.disabled = true; btn.style.opacity = "0.45"; btn.style.cursor = "not-allowed"; return;
+  }
+  const authVal = document.getElementById("ld-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
+  const changed = parseFloat(latStr) !== ldEditOriginal.lat ||
+                  parseFloat(lngStr) !== ldEditOriginal.lng ||
+                  parseInt(rStr)     !== ldEditOriginal.radius ||
+                  authVal            !== ldEditOriginal.auth;
+  btn.disabled = !changed;
+  btn.style.opacity = changed ? "1" : "0.45";
+  btn.style.cursor  = changed ? "pointer" : "not-allowed";
 }
 function saveLdEdit() {
   const w = ldEditingWorksite;
