@@ -1561,7 +1561,7 @@ function renderPins() {
         const labelText = fDef.getLabel ? fDef.getLabel(w) : val;
         if (val !== undefined && val !== null) {
           const col2 = fDef.colorMap ? (fDef.colorMap[val] || defaultPinColor) : col;
-          const tw = [...String(labelText)].reduce((s,c) => s + (c.charCodeAt(0) > 0x7F ? 10 : 6), 0) + 14;
+          const tw = [...String(labelText)].reduce((s,c) => s + (c.charCodeAt(0) > 0x7F ? 8 : 5), 0) + 10;
           const labelG = ns("g"); labelG.setAttribute("transform",`translate(${cl.x},${cl.y - 22})`); labelG.style.pointerEvents = "none";
           const rect = ns("rect"); rect.setAttribute("x",-tw/2); rect.setAttribute("y","-12"); rect.setAttribute("width",tw); rect.setAttribute("height","16"); rect.setAttribute("rx","4"); rect.setAttribute("fill",col2);
           const textEl = ns("text"); textEl.setAttribute("x","0"); textEl.setAttribute("y","0"); textEl.setAttribute("text-anchor","middle"); textEl.setAttribute("font-size","9.5"); textEl.setAttribute("fill","#fff"); textEl.setAttribute("font-family","sans-serif"); textEl.setAttribute("font-weight","500"); textEl.textContent = labelText;
