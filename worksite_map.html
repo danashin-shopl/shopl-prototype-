@@ -1044,8 +1044,8 @@ function exitEditMode() {
   renderFilterBar();
 }
 function tryExitEditMode() {
-  const popOpen   = document.getElementById("edit-popover").classList.contains("open");
-  const hasChanges = popOpen && !document.getElementById("ep-save-btn").disabled;
+  const popOpen    = document.getElementById("edit-popover").classList.contains("open");
+  const hasChanges = (popOpen && !document.getElementById("ep-save-btn").disabled) || ldHasChanges();
   if (hasChanges) {
     showConfirm(
       "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
@@ -1623,8 +1623,25 @@ function closeListPanel() {
   renderPins();
 }
 function openDetailFromList(w) {
-  // 다른 아이템 수정 중이었다면 원복
+  // 다른 아이템 수정 중 + 변경값 있으면 컨펌
   if (ldEditingWorksite && ldEditOriginal && ldEditingWorksite.id !== w.id) {
+    if (ldHasChanges()) {
+      showConfirm(
+        "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
+        "",
+        () => {
+          const prev = ldEditingWorksite;
+          prev.lat = ldEditOriginal.lat; prev.lng = ldEditOriginal.lng;
+          prev.radius = ldEditOriginal.radius; prev.auth = ldEditOriginal.auth;
+          prev.x = (prev.lng - 126.7) / (127.15 - 126.7) * 900;
+          prev.y = (37.62 - prev.lat) / (37.62 - 37.25) * 600;
+          ldEditOriginal = null; ldEditingWorksite = null;
+          openDetailFromList(w); // 확인 후 재호출로 전환
+        }
+      );
+      return; // 컨펌 전 중단
+    }
+    // 변경 없으면 조용히 원복
     const prev = ldEditingWorksite;
     prev.lat = ldEditOriginal.lat; prev.lng = ldEditOriginal.lng;
     prev.radius = ldEditOriginal.radius; prev.auth = ldEditOriginal.auth;
@@ -1662,9 +1679,35 @@ function openDetailFromList(w) {
 }
 function backToList() { collapseDetail(); }
 
+/* ── lp-edit-view 변경 감지 ── */
+function ldHasChanges() {
+  if (!ldEditingWorksite || !ldEditOriginal) return false;
+  const latStr = document.getElementById("ld-lat-input").value.trim();
+  const lngStr = document.getElementById("ld-lng-input").value.trim();
+  const rStr   = document.getElementById("ld-radius-input").value.trim();
+  if (!latStr || !lngStr || !rStr) return false;
+  const authVal = document.getElementById("ld-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
+  return parseFloat(latStr) !== ldEditOriginal.lat ||
+         parseFloat(lngStr) !== ldEditOriginal.lng ||
+         parseInt(rStr)     !== ldEditOriginal.radius ||
+         authVal            !== ldEditOriginal.auth;
+}
+
 /* ── 2단 패널 접기 ── */
 function collapseDetail(revertEdit) {
   if (revertEdit === undefined) revertEdit = true;
+  // 변경값 있으면 컨펌 후 진행
+  if (revertEdit && ldHasChanges()) {
+    showConfirm(
+      "수정을 종료할 경우 변경한 값이 저장되지 않습니다.",
+      "",
+      () => _doCollapseDetail(true)
+    );
+    return;
+  }
+  _doCollapseDetail(revertEdit);
+}
+function _doCollapseDetail(revertEdit) {
   if (revertEdit && ldEditingWorksite && ldEditOriginal) {
     const w = ldEditingWorksite;
     w.lat = ldEditOriginal.lat; w.lng = ldEditOriginal.lng;
