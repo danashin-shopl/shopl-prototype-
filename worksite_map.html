@@ -1682,15 +1682,8 @@ function backToList() { collapseDetail(); }
 /* ── lp-edit-view 변경 감지 ── */
 function ldHasChanges() {
   if (!ldEditingWorksite || !ldEditOriginal) return false;
-  const latStr = document.getElementById("ld-lat-input").value.trim();
-  const lngStr = document.getElementById("ld-lng-input").value.trim();
-  const rStr   = document.getElementById("ld-radius-input").value.trim();
-  if (!latStr || !lngStr || !rStr) return false;
-  const authVal = document.getElementById("ld-auth-gps").classList.contains("active") ? "GPS" : "QR+GPS";
-  return parseFloat(latStr) !== ldEditOriginal.lat ||
-         parseFloat(lngStr) !== ldEditOriginal.lng ||
-         parseInt(rStr)     !== ldEditOriginal.radius ||
-         authVal            !== ldEditOriginal.auth;
+  const btn = document.getElementById("ld-save-btn");
+  return btn && !btn.disabled;
 }
 
 /* ── 2단 패널 접기 ── */
