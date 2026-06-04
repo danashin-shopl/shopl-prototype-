@@ -280,6 +280,64 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
 .lp-edit-view { overflow-y: auto; flex: 1; padding: 14px 16px; }
 .ip-back { background: none; border: none; cursor: pointer; color: #6b7280; font-size: 12px; font-weight: 500; padding: 3px 6px; border-radius: 4px; display: flex; align-items: center; gap: 3px; flex-shrink: 0; white-space: nowrap; }
 .ip-back:hover { background: #f3f4f6; color: #374151; }
+
+/* ── 보기 설정 트리거 ── */
+/* ── 조회 항목 설정 트리거 ── */
+.vs-trigger-btn { display: flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #374151; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; transition: all 0.1s; pointer-events: all; }
+.vs-trigger-btn:hover { background: #f3f4f6; }
+.vs-v-sep { width: 1px; height: 18px; background: rgba(0,0,0,0.12); flex-shrink: 0; }
+
+/* ── 조회 항목 설정 모달 ── */
+.vs-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 600; display: none; align-items: center; justify-content: center; }
+.vs-overlay.open { display: flex; }
+.vs-modal { background: #fff; border-radius: 12px; width: 600px; height: 520px; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,0.18); overflow: hidden; }
+.vs-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 14px; border-bottom: 1px solid #f3f4f6; flex-shrink: 0; }
+.vs-hd-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+.vs-close-btn { background: none; border: none; cursor: pointer; color: #9ca3af; padding: 3px; border-radius: 4px; display: flex; }
+.vs-close-btn:hover { background: #f3f4f6; }
+/* 2단 컨텐츠 */
+.vs-content { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+/* 좌측 그룹 패널 */
+.vs-left { width: 172px; flex-shrink: 0; border-right: 1px solid #f3f4f6; display: flex; flex-direction: column; overflow-y: auto; }
+.vs-group-item { padding: 12px 14px; cursor: pointer; border-left: 3px solid transparent; transition: background 0.1s; flex-shrink: 0; }
+.vs-group-item:hover { background: #f9fafb; }
+.vs-group-item.active { background: #eff6ff; border-left-color: #2563eb; }
+.vs-group-name { font-size: 13px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 5px; }
+.vs-group-item.active .vs-group-name { color: #2563eb; }
+.vs-group-dot { width: 5px; height: 5px; border-radius: 50%; background: #ef4444; display: none; flex-shrink: 0; }
+.vs-group-item.has-partial .vs-group-dot { display: block; }
+.vs-group-summary { font-size: 11px; color: #9ca3af; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vs-group-summary.none { color: #ef4444; }
+.vs-left-foot { padding: 10px 14px; border-top: 1px solid #f3f4f6; font-size: 11px; color: #9ca3af; margin-top: auto; flex-shrink: 0; }
+/* 우측 항목 패널 */
+.vs-right { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.vs-search-wrap { padding: 12px 16px 0; flex-shrink: 0; }
+.vs-search { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 10px 7px 30px; font-size: 12px; color: #374151; background: #fff url("data:image/svg+xml,%3Csvg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 9px center; outline: none; transition: border-color 0.15s; }
+.vs-search:focus { border-color: #2563eb; }
+.vs-all-row { display: flex; align-items: center; gap: 9px; padding: 10px 16px 8px; flex-shrink: 0; }
+.vs-all-label { font-size: 13px; color: #374151; font-weight: 500; flex: 1; }
+.vs-ic-btn { background: none; border: 1px solid #d1d5db; border-radius: 5px; padding: 3px 8px; font-size: 11px; color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+.vs-ic-btn:hover { background: #f3f4f6; }
+.vs-sep-line { height: 1px; background: #f3f4f6; margin: 0 16px 2px; flex-shrink: 0; }
+.vs-list { overflow-y: auto; flex: 1; }
+.vs-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; transition: background 0.1s; }
+.vs-item:hover { background: #f9fafb; }
+.vs-item-label { font-size: 13px; color: #374151; flex: 1; }
+.vs-checkbox { width: 16px; height: 16px; border: 1.5px solid #d1d5db; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; transition: all 0.1s; }
+.vs-checkbox.checked { background: #2563eb; border-color: #2563eb; }
+.vs-checkbox.checked::after { content: ''; display: block; width: 9px; height: 5.5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px, -1px); }
+.vs-checkbox.indeterminate { background: #2563eb; border-color: #2563eb; }
+.vs-checkbox.indeterminate::after { content: ''; display: block; width: 8px; height: 2px; background: #fff; border-radius: 1px; }
+/* 푸터 */
+.vs-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #f3f4f6; flex-shrink: 0; }
+.vs-reset-btn { background: none; border: 1px solid #d1d5db; border-radius: 7px; padding: 7px 14px; font-size: 13px; color: #374151; cursor: pointer; }
+.vs-reset-btn:hover { background: #f3f4f6; }
+.vs-btn-group { display: flex; gap: 8px; }
+.vs-cancel-btn { background: #f3f4f6; border: none; border-radius: 7px; padding: 7px 16px; font-size: 13px; color: #374151; cursor: pointer; font-weight: 500; }
+.vs-cancel-btn:hover { background: #e5e7eb; }
+.vs-save-btn { background: #2563eb; border: none; border-radius: 7px; padding: 7px 20px; font-size: 13px; color: #fff; cursor: pointer; font-weight: 500; }
+.vs-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.vs-noresult { padding: 24px 16px; text-align: center; font-size: 13px; color: #9ca3af; }
 </style>
 </head>
 <body>
@@ -446,6 +504,11 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
   </div>
 
   <div class="filter-bar-wrap">
+    <button class="vs-trigger-btn" onclick="openViewSettings()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      보기 설정
+    </button>
+    <div class="vs-v-sep"></div>
     <button class="filter-bar-arrow disabled" id="filter-arrow-left" onclick="scrollFilterBar(-1)">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
@@ -521,6 +584,48 @@ input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color:
     <div class="zoom-ctrl">
       <button class="zbtn" id="zoom-in">+</button>
       <button class="zbtn" id="zoom-out">−</button>
+    </div>
+  </div>
+
+  <!-- 조회 항목 설정 모달 -->
+  <div class="vs-overlay" id="vs-overlay">
+    <div class="vs-modal">
+      <div class="vs-hd">
+        <span class="vs-hd-title">조회 항목 설정</span>
+        <button class="vs-close-btn" onclick="closeViewSettings()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="vs-content">
+        <!-- 좌측: 정보 그룹 목록 -->
+        <div class="vs-left" id="vs-left">
+          <!-- JS로 렌더링 -->
+          <div class="vs-left-foot" id="vs-left-foot"></div>
+        </div>
+        <!-- 우측: 항목 선택 패널 -->
+        <div class="vs-right">
+          <div class="vs-search-wrap">
+            <input class="vs-search" type="text" id="vs-search-input" placeholder="검색" oninput="vsOnSearch(this.value)">
+          </div>
+          <div class="vs-all-row">
+            <div class="vs-checkbox checked" id="vs-all-chk" onclick="toggleVsAll()"></div>
+            <span class="vs-all-label">전체</span>
+            <button class="vs-ic-btn" onclick="resetVsTab()" title="현재 그룹 항목 전체 선택으로 초기화">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              초기화
+            </button>
+          </div>
+          <div class="vs-sep-line"></div>
+          <div class="vs-list" id="vs-list"></div>
+        </div>
+      </div>
+      <div class="vs-footer">
+        <button class="vs-reset-btn" onclick="resetVsAll()">초기화</button>
+        <div class="vs-btn-group">
+          <button class="vs-cancel-btn" onclick="closeViewSettings()">취소</button>
+          <button class="vs-save-btn" id="vs-save-btn" onclick="saveViewSettings()" disabled>저장</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -742,6 +847,8 @@ const FILTERS = [
     getLabel: w => w.addDoc > 0 ? `등록(${w.addDoc})` : "미등록" },
 ];
 
+let visibleFilterKeys = new Set(FILTERS.map(f => f.key));
+let vsCurrentTab = 0, vsSearch = "", vsDraft = null, vsSnapshot = null;
 let activeFilter = "members";
 let selectedPinIds = new Set();
 // filterValues: 단일={ key: "값" }, 다중={ key: Set(["값1","값2"]) }
@@ -805,11 +912,16 @@ function chipLabel(f) {
 }
 
 function renderFilterBar() {
+  // activeFilter가 숨김 처리된 경우 첫 번째 보이는 필터로 전환
+  if (!visibleFilterKeys.has(activeFilter)) {
+    const first = FILTERS.find(f => visibleFilterKeys.has(f.key));
+    if (first) { activeFilter = first.key; filterValues = {}; }
+  }
   const bar = document.getElementById("filter-bar");
   const openKey = document.querySelector(".chip-dropdown.open")?.id?.replace("dd-","");
   bar.innerHTML = "";
 
-  FILTERS.forEach(f => {
+  FILTERS.filter(f => visibleFilterKeys.has(f.key)).forEach(f => {
     const isMulti = MULTI_FILTERS.has(f.key);
     const wrap = document.createElement("div");
     wrap.className = "chip-wrap";
@@ -1689,6 +1801,179 @@ function openDetailFromList(w) {
   renderPins();
 }
 function backToList() { collapseDetail(); }
+
+/* ── 보기 설정 모달 ── */
+const VS_GROUPS = [
+  { tab: "기본 정보", items: [
+    { key: "members",  label: "구성원 배정" },
+    { key: "accuracy", label: "위치 정확도" },
+    { key: "auth",     label: "출퇴근 인증 방법" },
+    { key: "do",       label: "도" },
+    { key: "city",     label: "도시" },
+  ]},
+  { tab: "추가 정보", items: [
+    { key: "addSingle", label: "추가 정보 - 단일 선택" },
+    { key: "addMulti",  label: "추가 정보 - 다중 선택" },
+    { key: "addText",   label: "추가 정보 - 직접 입력" },
+    { key: "addPhoto",  label: "추가 정보 - 사진" },
+    { key: "addDoc",    label: "추가 정보 - 문서" },
+  ]},
+  { tab: "고급 정보", items: [
+    { key: "zone",    label: "구역" },
+    { key: "grade",   label: "등급" },
+    { key: "dist",    label: "유통사" },
+    { key: "channel", label: "채널" },
+  ]},
+];
+
+function openViewSettings() {
+  vsDraft    = new Set(visibleFilterKeys);
+  vsSnapshot = new Set(visibleFilterKeys);
+  vsCurrentTab = 0;
+  vsSearch = "";
+  renderVsModal();
+  document.getElementById("vs-overlay").classList.add("open");
+  // 열릴 때 검색 초기화
+  const inp = document.getElementById("vs-search-input");
+  if (inp) inp.value = "";
+}
+
+function closeViewSettings() {
+  document.getElementById("vs-overlay").classList.remove("open");
+  vsDraft = null;
+}
+
+function saveViewSettings() {
+  visibleFilterKeys = new Set(vsDraft);
+  // activeFilter가 숨겨지면 첫 번째 보이는 필터로 리셋
+  if (!visibleFilterKeys.has(activeFilter)) {
+    const first = FILTERS.find(f => visibleFilterKeys.has(f.key));
+    if (first) { activeFilter = first.key; filterValues = {}; }
+  }
+  closeViewSettings();
+  renderFilterBar();
+  renderAll();
+}
+
+function resetVsAll() {
+  // 전체 초기화: 모든 항목 선택으로 되돌림
+  vsDraft = new Set(FILTERS.map(f => f.key));
+  renderVsModal();
+}
+
+function resetVsTab() {
+  // 현재 탭 초기화: 해당 탭 항목을 모두 선택으로
+  VS_GROUPS[vsCurrentTab].items.forEach(item => vsDraft.add(item.key));
+  renderVsModal();
+}
+
+function setVsTab(idx) {
+  vsCurrentTab = idx;
+  vsSearch = "";
+  const inp = document.getElementById("vs-search-input");
+  if (inp) inp.value = "";
+  renderVsModal();
+}
+
+function vsOnSearch(val) {
+  vsSearch = val;
+  renderVsModal();
+}
+
+function toggleVsAll() {
+  const group = VS_GROUPS[vsCurrentTab];
+  const q = vsSearch.toLowerCase();
+  const filtered = group.items.filter(i => !q || i.label.toLowerCase().includes(q));
+  const allOn = filtered.length > 0 && filtered.every(i => vsDraft.has(i.key));
+  if (allOn) {
+    filtered.forEach(i => vsDraft.delete(i.key));
+  } else {
+    filtered.forEach(i => vsDraft.add(i.key));
+  }
+  renderVsModal();
+}
+
+function renderVsModal() {
+  if (!vsDraft) return;
+
+  /* ── 좌측 그룹 패널 ── */
+  const leftPanel = document.getElementById("vs-left");
+  const leftFoot  = document.getElementById("vs-left-foot");
+  // 기존 그룹 아이템 제거 (left-foot 유지)
+  Array.from(leftPanel.children).forEach(child => { if (child !== leftFoot) child.remove(); });
+
+  VS_GROUPS.forEach((g, i) => {
+    const selItems = g.items.filter(item => vsDraft.has(item.key));
+    const allSel   = selItems.length === g.items.length;
+    const noneSel  = selItems.length === 0;
+
+    let summary = "";
+    if (noneSel) {
+      summary = "선택된 항목 없음";
+    } else if (allSel) {
+      summary = `전체 ${selItems.length}개`;
+    } else {
+      summary = selItems[0].label + (selItems.length > 1 ? ` +${selItems.length - 1}` : "");
+    }
+
+    const div = document.createElement("div");
+    div.className = "vs-group-item" + (i === vsCurrentTab ? " active" : "") + (!allSel ? " has-partial" : "");
+    div.innerHTML = `
+      <div class="vs-group-name">${g.tab}<span class="vs-group-dot"></span></div>
+      <div class="vs-group-summary${noneSel ? " none" : ""}">${summary}</div>`;
+    div.onclick = () => setVsTab(i);
+    leftPanel.insertBefore(div, leftFoot);
+  });
+
+  // 좌측 하단 선택됨 카운터
+  const totalSel = VS_GROUPS.reduce((s, g) => s + g.items.filter(i => vsDraft.has(i.key)).length, 0);
+  const totalAll = VS_GROUPS.reduce((s, g) => s + g.items.length, 0);
+  if (leftFoot) leftFoot.textContent = `선택됨 ${totalSel}/${totalAll}`;
+
+  /* ── 우측 항목 패널 ── */
+  const group    = VS_GROUPS[vsCurrentTab];
+  const q        = vsSearch.toLowerCase();
+  const filtered = group.items.filter(i => !q || i.label.toLowerCase().includes(q));
+
+  // 전체 체크박스 상태
+  const allOn  = filtered.length > 0 && filtered.every(i => vsDraft.has(i.key));
+  const someOn = filtered.some(i => vsDraft.has(i.key));
+  const allChk = document.getElementById("vs-all-chk");
+  if (allChk) allChk.className = "vs-checkbox" + (allOn ? " checked" : (someOn ? " indeterminate" : ""));
+
+  // 아이템 목록 렌더링
+  const list = document.getElementById("vs-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="vs-noresult">검색 결과가 없습니다.</div>`;
+  } else {
+    filtered.forEach(item => {
+      const on = vsDraft.has(item.key);
+      const div = document.createElement("div");
+      div.className = "vs-item";
+      div.innerHTML = `<div class="vs-checkbox ${on ? "checked" : ""}"></div><span class="vs-item-label">${item.label}</span>`;
+      div.onclick = () => {
+        if (vsDraft.has(item.key)) vsDraft.delete(item.key);
+        else vsDraft.add(item.key);
+        renderVsModal();
+        updateVsSaveBtn();
+      };
+      list.appendChild(div);
+    });
+  }
+
+  updateVsSaveBtn();
+}
+
+function updateVsSaveBtn() {
+  const btn = document.getElementById("vs-save-btn");
+  if (!btn || !vsSnapshot || !vsDraft) return;
+  // snapshot과 draft 비교
+  const changed = [...vsSnapshot].some(k => !vsDraft.has(k)) || [...vsDraft].some(k => !vsSnapshot.has(k));
+  btn.disabled = !changed;
+}
 
 /* ── lp-edit-view 변경 감지 ── */
 function ldHasChanges() {
