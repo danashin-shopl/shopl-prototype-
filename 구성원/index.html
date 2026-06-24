@@ -323,26 +323,35 @@
     .legend-num { font-size: 14px; font-weight: 700; color: #333; }
     .legend-pct { font-size: 14px; font-weight: 500; color: #777; }
 
-    /* 근무지 배정 + 회원가입률 card (split) */
-    .stat-card-split {
-      display: flex; flex-direction: column; gap: 10px;
+    /* 근무지 배정 + 회원가입률 — border 없는 wrapper */
+    .stat-card-stack {
+      display: flex; flex-direction: column; gap: 12px;
     }
     .stat-card-sub {
-      border-radius: 10px;
-      padding: 14px;
-      flex: 1;
+      border-radius: 12px;
+      padding: 16px;
     }
     .stat-card-sub.bg-blue { background: #F1F4F6; }
     .stat-card-sub.bg-sky  { background: #EAF5FF; }
-    .stat-card-sub-title { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .stat-card-sub-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .stat-card-sub-icon {
+      width: 36px; height: 36px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-card-sub-title { font-size: 16px; font-weight: 700; color: #333; }
     .stat-card-sub-num { font-size: 24px; font-weight: 500; color: #333; margin-bottom: 8px; }
     .stat-card-sub-row {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; gap: 8px;
       font-size: 14px;
     }
     .stat-card-sub-row .label { font-weight: 500; color: #333; }
     .stat-card-sub-row .val-blue { font-weight: 700; color: #3299FE; }
     .stat-card-sub-row .val-gray { font-weight: 700; color: #999; }
+    .sub-divider { width: 1px; height: 12px; background: #DDD; margin: 0 4px; }
 
     /* 초대 card */
     .invite-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
@@ -355,13 +364,13 @@
     .invite-subtitle { font-size: 14px; font-weight: 700; color: #999; margin-bottom: 4px; }
     .resend-btn {
       margin-top: 12px;
-      width: 100%;
-      padding: 6px 0;
+      padding: 6px 10px;
       background: #fff;
-      border: 1px solid #E0E0E0;
-      border-radius: 8px;
+      border: 1px solid #CCC;
+      border-radius: 6px;
       font-size: 13px; font-weight: 500; color: #333;
       cursor: pointer;
+      display: inline-block;
     }
     .resend-btn:hover { background: #F8F8F8; }
 
@@ -885,32 +894,42 @@
         </div>
       </div>
 
-      <!-- 3. 근무지 배정 비율 + 회원가입률 -->
-      <div class="stat-card">
-        <div class="stat-card-split">
-          <div class="stat-card-sub bg-blue">
-            <div class="stat-card-sub-title">근무지 배정 비율</div>
-            <div class="stat-card-sub-num">72.8%</div>
-            <div class="stat-card-sub-row">
-              <span class="label">배정</span>
-              <span class="val-blue">158</span>
-            </div>
-            <div class="stat-card-sub-row">
-              <span class="label">미배정</span>
-              <span class="val-gray">59</span>
+      <!-- 3. 근무지 배정 비율 + 회원가입률 (외곽선 없는 wrapper) -->
+      <div class="stat-card-stack">
+        <div class="stat-card-sub bg-blue">
+          <div class="stat-card-sub-header">
+            <span class="stat-card-sub-title">근무지 배정 비율</span>
+            <div class="stat-card-sub-icon" style="background:#DCE3EE;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 2C6.69 2 4 4.69 4 8c0 5.25 6 10 6 10s6-4.75 6-10c0-3.31-2.69-6-6-6zm0 8.5c-1.38 0-2.5-1.12-2.5-2.5S8.62 5.5 10 5.5s2.5 1.12 2.5 2.5S11.38 10.5 10 10.5z" fill="#7E878E"/>
+              </svg>
             </div>
           </div>
-          <div class="stat-card-sub bg-sky">
-            <div class="stat-card-sub-title">회원가입률</div>
-            <div class="stat-card-sub-num">67.7%</div>
-            <div class="stat-card-sub-row">
-              <span class="label">가입</span>
-              <span class="val-blue">147</span>
+          <div class="stat-card-sub-num">72.8%</div>
+          <div class="stat-card-sub-row">
+            <span class="label">배정</span>
+            <span class="val-blue">158</span>
+            <span class="sub-divider"></span>
+            <span class="label">미배정</span>
+            <span class="val-gray">59</span>
+          </div>
+        </div>
+        <div class="stat-card-sub bg-sky">
+          <div class="stat-card-sub-header">
+            <span class="stat-card-sub-title">회원가입률</span>
+            <div class="stat-card-sub-icon" style="background:#D6E9FB;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 2a4 4 0 100 8 4 4 0 000-8zm0 10c-4.42 0-8 1.79-8 4v1h16v-1c0-2.21-3.58-4-8-4z" fill="#4C6882"/>
+              </svg>
             </div>
-            <div class="stat-card-sub-row">
-              <span class="label">미가입</span>
-              <span class="val-gray">70</span>
-            </div>
+          </div>
+          <div class="stat-card-sub-num">67.7%</div>
+          <div class="stat-card-sub-row">
+            <span class="label">가입 완료</span>
+            <span class="val-blue">147</span>
+            <span class="sub-divider"></span>
+            <span class="label">미가입</span>
+            <span class="val-gray">70</span>
           </div>
         </div>
       </div>
@@ -953,6 +972,7 @@
           </div>
         </div>
         <button class="resend-btn">초대 재발송</button>
+
       </div>
 
     </div><!-- /stats-grid -->
