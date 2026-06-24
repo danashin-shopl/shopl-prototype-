@@ -381,38 +381,41 @@
     .count-label { font-size: 13px; font-weight: 500; color: #999; }
     .count-val { font-size: 13px; font-weight: 700; color: #333; }
 
-    .search-box {
+    .sort-group {
       display: flex; align-items: center; gap: 6px;
-      padding: 0 10px;
-      height: 32px;
-      border: 1px solid #E0E0E0; border-radius: 6px;
-      background: #fff;
-      width: 220px;
     }
-    .search-box svg { color: #999; flex-shrink: 0; }
-    .search-box input {
-      border: none; outline: none;
-      font-size: 13px; font-family: inherit; color: #333;
-      width: 100%; background: transparent;
+    .sort-label {
+      font-size: 13px; font-weight: 600; color: #777;
     }
-    .search-box input::placeholder { color: #BDBDBD; }
-
-    .filter-btn {
+    .sort-select {
       display: flex; align-items: center; gap: 4px;
+      padding: 0 10px; height: 32px;
+      border: 1px solid #E0E0E0; border-radius: 6px;
+      background: #fff; font-size: 14px; font-weight: 500; color: #333;
+      cursor: pointer; min-width: 80px;
+    }
+    .sort-direction {
+      display: flex; align-items: center;
+      border: 1px solid #E0E0E0; border-radius: 6px;
+      background: #fff; overflow: hidden; height: 32px;
+    }
+    .sort-dir-btn {
+      width: 32px; height: 32px;
+      background: transparent; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .sort-dir-btn:hover { background: #F4F4F4; }
+    .sort-dir-divider { width: 1px; height: 18px; background: #DDD; }
+
+    .view-setting-btn {
+      display: flex; align-items: center; gap: 5px;
       padding: 0 10px; height: 32px;
       border: 1px solid #E0E0E0; border-radius: 6px;
       background: #fff; font-size: 13px; font-weight: 500; color: #333;
       cursor: pointer;
     }
-    .filter-btn:hover { background: #F8F8F8; }
-
-    .col-btn {
-      display: flex; align-items: center; gap: 4px;
-      padding: 0 10px; height: 32px;
-      border: 1px solid #E0E0E0; border-radius: 6px;
-      background: #fff; font-size: 13px; font-weight: 500; color: #333;
-      cursor: pointer;
-    }
+    .view-setting-btn:hover { background: #F8F8F8; }
 
     .download-btn {
       display: flex; align-items: center; gap: 4px;
@@ -963,30 +966,39 @@
           <div class="toolbar-count">
             <span class="count-label">전체</span>
             <span class="count-val">217</span>
-            <span class="count-label" style="margin-left:8px">선택</span>
-            <span class="count-val">0</span>
           </div>
-          <div class="search-box">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <circle cx="6" cy="6" r="4.5" stroke="#BDBDBD" stroke-width="1.3"/>
-              <path d="M9.5 9.5L12 12" stroke="#BDBDBD" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
-            <input type="text" placeholder="이름, 이메일, 휴대폰 검색" />
+          <div class="sort-group">
+            <span class="sort-label">정렬</span>
+            <div class="sort-select">
+              <span>이름</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 4L6 8L10 4" stroke="#CCC" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="sort-direction">
+              <button class="sort-dir-btn active">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2V12M4 9L7 12L10 9" stroke="#333" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="sort-dir-divider"></div>
+              <button class="sort-dir-btn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 12V2M4 5L7 2L10 5" stroke="#999" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
-          <button class="filter-btn">
+          <button class="view-setting-btn">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M1 3H13M3 7H11M5 11H9" stroke="#333" stroke-width="1.3" stroke-linecap="round"/>
+              <rect x="1" y="2" width="12" height="2" rx="1" fill="#333"/>
+              <rect x="1" y="6" width="12" height="2" rx="1" fill="#333"/>
+              <rect x="1" y="10" width="12" height="2" rx="1" fill="#333"/>
+              <circle cx="4" cy="3" r="1.5" fill="#fff" stroke="#333" stroke-width="1"/>
+              <circle cx="9" cy="7" r="1.5" fill="#fff" stroke="#333" stroke-width="1"/>
+              <circle cx="5" cy="11" r="1.5" fill="#fff" stroke="#333" stroke-width="1"/>
             </svg>
-            필터
-          </button>
-          <button class="col-btn">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <rect x="1" y="1" width="5" height="5" rx="1" stroke="#333" stroke-width="1.3"/>
-              <rect x="8" y="1" width="5" height="5" rx="1" stroke="#333" stroke-width="1.3"/>
-              <rect x="1" y="8" width="5" height="5" rx="1" stroke="#333" stroke-width="1.3"/>
-              <rect x="8" y="8" width="5" height="5" rx="1" stroke="#333" stroke-width="1.3"/>
-            </svg>
-            컬럼 설정
+            보기 설정
           </button>
         </div>
         <button class="download-btn">
