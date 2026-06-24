@@ -187,7 +187,7 @@
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr;
-      gap: 0;
+      gap: 12px;
       padding: 16px 30px;
       background: #fff;
     }
@@ -195,37 +195,38 @@
     .stat-card {
       background: #fff;
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
       border: 1px solid #E8ECF0;
     }
-    .stat-card + .stat-card { margin-left: 12px; }
 
     .stat-card-title {
       font-size: 16px; font-weight: 700; color: #333;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
-    .stat-donut-row {
-      display: flex; gap: 16px; align-items: center;
+    /* 차트 + 전체숫자 가로 배치 */
+    .stat-chart-row {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 16px;
     }
     .donut-wrap {
-      position: relative; width: 70px; height: 70px; flex-shrink: 0;
+      position: relative; width: 100px; height: 100px; flex-shrink: 0;
     }
     .donut-wrap svg { transform: rotate(-90deg); }
     .donut-center {
       position: absolute; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .donut-center .d-label { font-size: 11px; font-weight: 700; color: #999; line-height: 1; }
-    .donut-center .d-value { font-size: 14px; font-weight: 500; color: #333; }
+    .donut-center .d-label { font-size: 12px; font-weight: 700; color: #999; line-height: 1.2; }
+    .donut-center .d-value { font-size: 20px; font-weight: 500; color: #333; }
 
-    .stat-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    /* 레전드는 차트 아래 1열 */
+    .stat-legend { display: flex; flex-direction: column; gap: 10px; }
     .legend-row {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 8px;
     }
-    .legend-left { display: flex; align-items: center; gap: 6px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .legend-left { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
     .legend-name { font-size: 14px; font-weight: 500; color: #333; }
     .legend-right { display: flex; align-items: center; gap: 4px; }
     .legend-num { font-size: 14px; font-weight: 700; color: #333; }
@@ -603,62 +604,61 @@
       <!-- 1. 구성원 분포 -->
       <div class="stat-card">
         <div class="stat-card-title">구성원 분포</div>
-        <div class="stat-donut-row">
+        <div class="stat-chart-row">
           <div class="donut-wrap">
-            <svg width="70" height="70" viewBox="0 0 70 70">
-              <!-- bg -->
-              <circle class="donut-bg" cx="35" cy="35" r="28" stroke="#F0F0F0" stroke-width="10"/>
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle class="donut-bg" cx="50" cy="50" r="40" stroke="#F0F0F0" stroke-width="14"/>
               <!-- 직원 51.2% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#3299FE" stroke-width="10"
-                stroke-dasharray="90.2 175.8"
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#3299FE" stroke-width="14"
+                stroke-dasharray="128.7 122.3"
                 stroke-dashoffset="0"/>
               <!-- 리더 29% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#35485B" stroke-width="10"
-                stroke-dasharray="51.1 214.9"
-                stroke-dashoffset="-90.2"/>
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#35485B" stroke-width="14"
+                stroke-dasharray="72.9 178.1"
+                stroke-dashoffset="-128.7"/>
               <!-- 관리자 19.8% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#FFBB00" stroke-width="10"
-                stroke-dasharray="34.9 231.1"
-                stroke-dashoffset="-141.3"/>
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#FFBB00" stroke-width="14"
+                stroke-dasharray="49.8 201.2"
+                stroke-dashoffset="-201.6"/>
             </svg>
             <div class="donut-center">
               <span class="d-label">전체</span>
               <span class="d-value">217</span>
             </div>
           </div>
-          <div class="stat-legend">
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#FFBB00"></div>
-                <span class="legend-name">관리자</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">43</span>
-                <span class="legend-pct">(19.8%)</span>
-              </div>
+        </div>
+        <div class="stat-legend">
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#FFBB00"></div>
+              <span class="legend-name">관리자</span>
             </div>
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#35485B"></div>
-                <span class="legend-name">리더</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">63</span>
-                <span class="legend-pct">(29%)</span>
-              </div>
+            <div class="legend-right">
+              <span class="legend-num">43</span>
+              <span class="legend-pct">(19.8%)</span>
             </div>
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#3299FE"></div>
-                <span class="legend-name">직원</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">111</span>
-                <span class="legend-pct">(51.2%)</span>
-              </div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#35485B"></div>
+              <span class="legend-name">리더</span>
+            </div>
+            <div class="legend-right">
+              <span class="legend-num">63</span>
+              <span class="legend-pct">(29%)</span>
+            </div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#3299FE"></div>
+              <span class="legend-name">직원</span>
+            </div>
+            <div class="legend-right">
+              <span class="legend-num">111</span>
+              <span class="legend-pct">(51.2%)</span>
             </div>
           </div>
         </div>
@@ -667,61 +667,61 @@
       <!-- 2. 직무/직급 -->
       <div class="stat-card">
         <div class="stat-card-title">직무/직급</div>
-        <div class="stat-donut-row">
+        <div class="stat-chart-row">
           <div class="donut-wrap">
-            <svg width="70" height="70" viewBox="0 0 70 70">
-              <circle class="donut-bg" cx="35" cy="35" r="28" stroke="#F0F0F0" stroke-width="10"/>
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle class="donut-bg" cx="50" cy="50" r="40" stroke="#F0F0F0" stroke-width="14"/>
               <!-- 직무/직급 없음 84.8% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#2D89E4" stroke-width="10"
-                stroke-dasharray="149.5 116.5"
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#2D89E4" stroke-width="14"
+                stroke-dasharray="213.3 37.7"
                 stroke-dashoffset="0"/>
               <!-- 매니저 6.5% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#84C4FC" stroke-width="10"
-                stroke-dasharray="11.5 254.5"
-                stroke-dashoffset="-149.5"/>
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#84C4FC" stroke-width="14"
+                stroke-dasharray="16.3 234.7"
+                stroke-dashoffset="-213.3"/>
               <!-- 기타 8.8% -->
-              <circle class="donut-seg" cx="35" cy="35" r="28"
-                stroke="#DDDDDD" stroke-width="10"
-                stroke-dasharray="15.5 250.5"
-                stroke-dashoffset="-161.0"/>
+              <circle class="donut-seg" cx="50" cy="50" r="40"
+                stroke="#DDDDDD" stroke-width="14"
+                stroke-dasharray="22.1 228.9"
+                stroke-dashoffset="-229.6"/>
             </svg>
             <div class="donut-center">
               <span class="d-label">전체</span>
               <span class="d-value">217</span>
             </div>
           </div>
-          <div class="stat-legend">
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#2D89E4"></div>
-                <span class="legend-name" style="font-size:12px">직무/직급 없음</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">184</span>
-                <span class="legend-pct">(84.8%)</span>
-              </div>
+        </div>
+        <div class="stat-legend">
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#2D89E4"></div>
+              <span class="legend-name">직무/직급 없음</span>
             </div>
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#84C4FC"></div>
-                <span class="legend-name" style="font-size:12px">매니저(Supervisor)</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">14</span>
-                <span class="legend-pct">(6.5%)</span>
-              </div>
+            <div class="legend-right">
+              <span class="legend-num">184</span>
+              <span class="legend-pct">(84.8%)</span>
             </div>
-            <div class="legend-row">
-              <div class="legend-left">
-                <div class="legend-dot" style="background:#DDD"></div>
-                <span class="legend-name">기타</span>
-              </div>
-              <div class="legend-right">
-                <span class="legend-num">19</span>
-                <span class="legend-pct">(8.8%)</span>
-              </div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#84C4FC"></div>
+              <span class="legend-name" style="font-size:13px">매니저(Supervisor)</span>
+            </div>
+            <div class="legend-right">
+              <span class="legend-num">14</span>
+              <span class="legend-pct">(6.5%)</span>
+            </div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#DDD"></div>
+              <span class="legend-name">기타</span>
+            </div>
+            <div class="legend-right">
+              <span class="legend-num">19</span>
+              <span class="legend-pct">(8.8%)</span>
             </div>
           </div>
         </div>
