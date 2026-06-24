@@ -1259,12 +1259,37 @@
 
   .modal-item-list { flex: 1; overflow-y: auto; padding: 4px 0; }
 
-  /* 추가 정보 sub-group header */
-  .modal-group-header {
-    padding: 8px 12px 4px;
-    font-size: 12px; font-weight: 700; color: #777;
-    background: #F9F9F9; border-radius: 8px;
-    margin: 8px 0 2px;
+  /* 추가 정보 sub-group */
+  .extra-sub-group { margin-bottom: 4px; }
+  .extra-sub-header {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 8px 6px 4px;
+    background: #F4F4F4; border-radius: 6px;
+  }
+  .extra-sub-chevron {
+    width: 20px; height: 20px; border: none; background: transparent;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; padding: 0; flex-shrink: 0;
+    transition: transform .15s;
+  }
+  .extra-sub-chevron:hover { background: #E8E8E8; }
+  .extra-sub-chevron svg { display: block; transition: transform .15s; }
+  .extra-sub-chevron.open svg { transform: rotate(0deg); }
+  .extra-sub-chevron:not(.open) svg { transform: rotate(-90deg); }
+  .extra-sub-all-label {
+    display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1;
+  }
+  .extra-sub-name { font-size: 13px; font-weight: 600; color: #333; }
+  .extra-sub-items { padding-left: 20px; }
+  .modal-item.indented { padding-left: 12px; }
+  .modal-cb-box.indeterminate {
+    background: #3299FE; border-color: #3299FE;
+  }
+  .modal-cb-box.indeterminate::after {
+    content: '';
+    width: 8px; height: 2px;
+    background: #fff;
+    display: block; border-radius: 1px;
   }
 
   .modal-item {
@@ -1337,11 +1362,13 @@ const CATEGORIES = [
   { id: 'device',   label: '기기 및 앱 정보' },
 ];
 
-// 추가 정보의 sub-category (가변 — 샘플)
+// 추가 정보의 sub-category (가변 — Figma 샘플 기준)
 const EXTRA_SUB_CATEGORIES = [
-  { id: 'extra_hr',   label: '인사 관리', items: ['팀', '직책', '입사 경로'] },
-  { id: 'extra_cert', label: '자격 및 교육', items: ['보유 자격증', '수료 교육'] },
+  { id: 'extra_cat1', label: 'category',   items: ['망그러졌나요', '추가정보테스트'] },
+  { id: 'extra_cat2', label: '카테고리',   items: ['추가정보', 'ㅎㅎ', '1'] },
 ];
+// 추가 정보 중 서브카테고리 없는 항목
+const EXTRA_NO_CAT_ITEMS = ['연차 촉진 대상', '계좌번호', '사진 유형', '문서', '직접 입력', '수습평가', '추가정보 테스트1', '커스텀추가정보필드A'];
 
 const COLUMNS = [
   // [기본 정보]
@@ -1354,12 +1381,7 @@ const COLUMNS = [
   { id: 'grade',         label: '등급',           cat: 'basic',    editable: true,  width: 120 },
   { id: 'join_date',     label: '입사일',         cat: 'basic',    editable: true,  width: 140 },
   { id: 'tenure',        label: '재직 기간',      cat: 'basic',    editable: false, width: 120 },
-  // [추가 정보] — sub-category 포함
-  { id: 'team',          label: '팀',             cat: 'extra',    editable: true,  width: 120, sub: 'extra_hr' },
-  { id: 'position',      label: '직책',           cat: 'extra',    editable: true,  width: 120, sub: 'extra_hr' },
-  { id: 'hire_channel',  label: '입사 경로',      cat: 'extra',    editable: true,  width: 140, sub: 'extra_hr' },
-  { id: 'cert',          label: '보유 자격증',    cat: 'extra',    editable: true,  width: 140, sub: 'extra_cert' },
-  { id: 'education_cert',label: '수료 교육',      cat: 'extra',    editable: true,  width: 140, sub: 'extra_cert' },
+  // [추가 정보] — EXTRA_SUB_CATEGORIES + EXTRA_NO_CAT_ITEMS 에서 동적 추가 (아래 코드 참조)
   // [그룹 및 권한]
   { id: 'perm_type',     label: '권한 유형',      cat: 'group',    editable: true,  width: 160 },
   { id: 'leader_group',  label: '리더 권한 그룹', cat: 'group',    editable: true,  width: 160 },
@@ -1388,6 +1410,16 @@ const COLUMNS = [
   { id: 'app_version',   label: '앱 현재 버전',   cat: 'device',   editable: false, width: 140 },
 ];
 
+// 추가 정보 컬럼 동적 추가
+EXTRA_SUB_CATEGORIES.forEach(sub => {
+  sub.items.forEach(label => {
+    COLUMNS.push({ id: 'extra_' + sub.id + '_' + label, label, cat: 'extra', editable: true, width: 140, sub: sub.id });
+  });
+});
+EXTRA_NO_CAT_ITEMS.forEach(label => {
+  COLUMNS.push({ id: 'extra_nc_' + label, label, cat: 'extra', editable: true, width: 140 });
+});
+
 const MEMBER_DATA = [
   { name: '박아이',  initial: '박', color: 'linear-gradient(135deg,#A8D4FF,#3299FE)', id: 'EMP-001',
     join_status: 'joined',  email: 'aeri.park@shoplworks.com',   phone: '010-4299-5027', perm_type: '리더',  job_title: '—', grade: '—', emp_no: '001', display_name: '—', join_date: '2021-03-02', tenure: '4년 3개월', team: '개발팀', position: '시니어', hire_channel: '공채', cert: 'AWS SA', education_cert: '사내 리더십', leader_group: '개발 리더', self_att_perm: '허용', fixed_site: '본사', assign_site: '본사', today_sched: '09:00~18:00', work_policy: '표준 근무', birth_date: '1990-05-12', age: '35', id_number: '●●●●●●-●●●●●●●', emergency: '010-0000-0001', home_addr: '서울 강남구', total_career: '7년', in_career: '4년', out_career: '3년', education: '대학교 졸업', emp_type: '정규직', salary: '—', salary_acct: '—', device: 'iPhone 15', app_version: '3.2.1' },
@@ -1412,6 +1444,7 @@ let selectedCols = new Set(['join_status', 'email', 'phone', 'job_title', 'grade
 // 모달 임시 상태
 let modalTempCols = new Set();
 let currentCat = 'basic';
+const extraSubOpen = {}; // 서브카테고리 펼치기/접기 상태
 
 // ══════════════════════════════════════════════
 // 테이블 렌더
@@ -1483,13 +1516,18 @@ function renderCatList() {
     const hasSel = countSelectedInCat(cat.id) > 0;
     const isActive = cat.id === currentCat;
 
-    // 추가 정보: sub-category chips 표시
+    // 추가 정보: 선택된 항목명을 chip으로 표시 (서브카테고리명 X)
     let subHtml = '';
-    if (cat.id === 'extra') {
-      const chips = EXTRA_SUB_CATEGORIES.map(s =>
-        `<span class="modal-cat-sub-chip">${s.label}</span>`
-      ).join('');
-      subHtml = `<div class="modal-cat-subs">${chips}</div>`;
+    if (cat.id === 'extra' && hasSel) {
+      const selExtraCols = COLUMNS.filter(c => c.cat === 'extra' && modalTempCols.has(c.id));
+      if (selExtraCols.length > 0) {
+        const first = selExtraCols[0];
+        const rest = selExtraCols.length - 1;
+        subHtml = `<div class="modal-cat-subs">
+          <span class="modal-cat-sub-chip">${first.label}</span>
+          ${rest > 0 ? `<span class="modal-cat-sub-chip">+${rest}</span>` : ''}
+        </div>`;
+      }
     }
 
     return `<div class="modal-cat-item${isActive ? ' active' : ''}" data-cat="${cat.id}">
@@ -1527,13 +1565,29 @@ function renderItemList(filter = '') {
   }
 
   if (currentCat === 'extra') {
-    // sub-category 그룹별 렌더
+    // sub-category 그룹: chevron + 전체선택 checkbox + 그룹명, 하위 항목 들여쓰기
     EXTRA_SUB_CATEGORIES.forEach(sub => {
-      const subCols = cols.filter(c => c.sub === sub.id && (!filter || c.label.includes(filter)));
+      const subCols = COLUMNS.filter(c => c.cat === 'extra' && c.sub === sub.id && (!filter || c.label.includes(filter)));
       if (!subCols.length) return;
-      html += `<div class="modal-group-header">${sub.label}</div>`;
-      subCols.forEach(c => { html += itemHtml(c, totalSelected); });
+      const allChecked = subCols.every(c => modalTempCols.has(c.id));
+      const someChecked = subCols.some(c => modalTempCols.has(c.id));
+      const isOpen = extraSubOpen[sub.id] !== false; // 기본 열림
+      html += `<div class="extra-sub-group" data-sub="${sub.id}">
+        <div class="extra-sub-header">
+          <button class="extra-sub-chevron${isOpen ? ' open' : ''}" data-sub="${sub.id}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 7l3 3 3-3" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <label class="modal-check-label extra-sub-all-label" data-sub="${sub.id}">
+            <div class="modal-cb-box${allChecked ? ' checked' : someChecked ? ' indeterminate' : ''}"></div>
+            <span class="extra-sub-name">${sub.label}</span>
+          </label>
+        </div>
+        ${isOpen ? `<div class="extra-sub-items">${subCols.map(c => itemHtml(c, totalSelected, true)).join('')}</div>` : ''}
+      </div>`;
     });
+    // 카테고리 없는 항목
+    const noCatCols = COLUMNS.filter(c => c.cat === 'extra' && !c.sub && (!filter || c.label.includes(filter)));
+    noCatCols.forEach(c => { html += itemHtml(c, totalSelected); });
   } else {
     cols
       .filter(c => !filter || c.label.includes(filter))
@@ -1542,6 +1596,7 @@ function renderItemList(filter = '') {
 
   list.innerHTML = html || '<div style="padding:20px 12px;font-size:13px;color:#999">검색 결과가 없습니다</div>';
 
+  // 일반 항목 체크박스 클릭
   list.querySelectorAll('.modal-item[data-col]').forEach(el => {
     el.addEventListener('click', () => {
       const col = COLUMNS.find(c => c.id === el.dataset.col);
@@ -1559,13 +1614,44 @@ function renderItemList(filter = '') {
     });
   });
 
+  // 추가 정보: 서브카테고리 chevron (펼치기/접기)
+  list.querySelectorAll('.extra-sub-chevron').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const subId = btn.dataset.sub;
+      extraSubOpen[subId] = extraSubOpen[subId] === false ? true : false;
+      renderItemList(document.getElementById('modal-search').value);
+    });
+  });
+
+  // 추가 정보: 서브카테고리 전체선택 checkbox
+  list.querySelectorAll('.extra-sub-all-label').forEach(lbl => {
+    lbl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const subId = lbl.dataset.sub;
+      const subCols = COLUMNS.filter(c => c.cat === 'extra' && c.sub === subId);
+      const allChecked = subCols.every(c => modalTempCols.has(c.id));
+      if (allChecked) {
+        subCols.forEach(c => modalTempCols.delete(c.id));
+      } else {
+        subCols.forEach(c => {
+          if (!modalTempCols.has(c.id) && modalTempCols.size < MAX_SELECT) modalTempCols.add(c.id);
+        });
+      }
+      renderCatList();
+      renderItemList(document.getElementById('modal-search').value);
+      updateCountDisplay();
+      updateAllCheckbox();
+    });
+  });
+
   updateAllCheckbox();
 }
 
-function itemHtml(col, totalSelected) {
+function itemHtml(col, totalSelected, indented = false) {
   const checked = modalTempCols.has(col.id);
   const maxed = !checked && totalSelected >= MAX_SELECT;
-  return `<div class="modal-item${maxed ? ' disabled' : ''}" data-col="${col.id}">
+  return `<div class="modal-item${maxed ? ' disabled' : ''}${indented ? ' indented' : ''}" data-col="${col.id}">
     <div class="modal-item-cb${checked ? ' checked' : ''}"></div>
     <span class="modal-item-name">${col.label}</span>
   </div>`;
